@@ -1,3 +1,5 @@
+# service
+{{- if .Values.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -16,4 +18,4 @@ spec:
       {{- end }}
   selector:
     {{- include "webapp.selectorLabels" . | nindent 4 }}
-
+{{- end }}
