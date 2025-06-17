@@ -1,6 +1,6 @@
 #enabled: true
 image:
-  repository: nginx
+  #  repository: nginx
   pullPolicy: IfNotPresent
   tag: stable
 
