@@ -1,10 +1,11 @@
-# enabled: true
+# containerPort: 80
+enabled: true
 image:
   repository: nginx
   pullPolicy: IfNotPresent
   tag: stable
 
-service2:
+service:
   type: NodePort
   port: 80
   nodePort: 30080  # puerto en el nodo, debe estar entre 30000-32767
