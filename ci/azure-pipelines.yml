@@ -7,8 +7,10 @@ trigger:
     include:
       - "k8s/helm/webapp/*"
 
+#pool:
+#  vmImage: 'ubuntu-latest'
 pool:
-  vmImage: 'ubuntu-latest'
+  name: EC2-Ubuntu
 
 variables:
   chartPath: 'k8s/helm/webapp'
