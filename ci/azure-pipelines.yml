@@ -36,14 +36,17 @@ stages:
         echo "$(KUBECONFIG_CONTENT)" > $(System.DefaultWorkingDirectory)/kubeconfig
       displayName: 'Generate kubeconfig file'
 
+    
+
     - task: HelmDeploy@1
       displayName: 'Deploy Helm Chart'
       inputs:
-        connectionType: 'Kubernetes Configuration'
-        kubernetesConfig: '$(System.DefaultWorkingDirectory)/kubeconfig'
+        connectionType: 'None'
+          #        kubernetesConfig: '$(System.DefaultWorkingDirectory)/kubeconfig'
         namespace: '$(namespace)'
         command: 'upgrade'
         chartType: 'FilePath'
         chartPath: '$(chartPath)'
         releaseName: '$(releaseName)'
         valueFile: '$(valuesFile)'
+        arguments: '--values k8s/helm/webapp/values-dev.yaml'
