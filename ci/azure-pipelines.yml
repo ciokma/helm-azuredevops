@@ -49,6 +49,6 @@ stages:
         chartPath: '$(chartPath)'
         releaseName: '$(releaseName)'
         valueFile: '$(valuesFile)'
-        arguments: '--values k8s/helm/webapp/values-dev.yaml --set image.tag=$(Build.BuildNumber)'
+        arguments: '--values k8s/helm/webapp/values-dev.yaml'
         install: true
 
