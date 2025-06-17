@@ -1,6 +1,6 @@
-shouldRender: false
+shouldRender: truef
 containerPort: 80
-enabled: false
+enabled: true
 image:
   repository: nginx
   pullPolicy: IfNotPresent
