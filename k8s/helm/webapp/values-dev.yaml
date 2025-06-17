@@ -15,4 +15,4 @@ service:
 configMap:
   PUBLIC_URL_DUMMY: "https://dummy-url.com"
 webapp:
-  fullname: null
+  fullname: "webapp"
