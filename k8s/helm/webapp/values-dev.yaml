@@ -10,3 +10,6 @@ service:
   type: NodePort
   port: 80
   nodePort: 30080  # puerto en el nodo, debe estar entre 30000-32767
+
+configMap:
+  PUBLIC_URL_DUMMY: "https://dummy-url.com"
