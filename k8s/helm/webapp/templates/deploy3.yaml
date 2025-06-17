@@ -1,0 +1,19 @@
+# templates/deployment.yaml
+{{- if false }} # Esto hará que el contenido dentro de este bloque no se genere
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mychart.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "mychart.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "mychart.name" . }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "nginx:latest"
+{{- end }}
