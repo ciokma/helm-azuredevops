@@ -1,4 +1,4 @@
-gontainerPort: 80
+containerPort: 80
 enabled: true
 image:
   repository: nginx
