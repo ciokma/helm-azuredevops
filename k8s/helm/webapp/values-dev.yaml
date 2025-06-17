@@ -1,5 +1,5 @@
 containerPort: 80
-enabled: true
+enabled: false
 image:
   repository: nginx
   pullPolicy: IfNotPresent
