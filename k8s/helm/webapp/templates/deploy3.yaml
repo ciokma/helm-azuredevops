@@ -1,19 +1,13 @@
-# templates/deployment.yaml
-{{- if false }} # Esto hará que el contenido dentro de este bloque no se genere
-apiVersion: apps/v1
-kind: Deployment
+# templates/pdb.yaml (Example of the problem)
+# enables PodDisruptionBudget
+{{- if .Values.pdb }}{{ if .Values.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
 metadata:
-  name: {{ include "mychart.fullname" . }}
+  name: {{ include "mychart.fullname" . }}-pdb
 spec:
+  minAvailable: 1
   selector:
     matchLabels:
-      app: {{ include "mychart.name" . }}
-  template:
-    metadata:
-      labels:
-        app: {{ include "mychart.name" . }}
-    spec:
-      containers:
-        - name: {{ .Chart.Name }}
-          image: "nginx:latest"
-{{- end }}
+      {{- include "mychart.selectorLabels" . | nindent 6 }}
+{{- end }}{{ end }}
