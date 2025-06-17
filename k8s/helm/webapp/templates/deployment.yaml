@@ -2,7 +2,7 @@
 {{- if .Values.enabled }}
 ---
 apiVersion: apps/v1
-kind: 
+kind: Deployment 
 metadata:
   name: {{ include "webapp.fullname" . }}
   labels:
