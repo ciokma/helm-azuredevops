@@ -51,4 +51,5 @@ stages:
         valueFile: '$(valuesFile)'
         arguments: '--values k8s/helm/webapp/values-dev.yaml'
         install: true
+        publishPipelineMetadata: true
 
