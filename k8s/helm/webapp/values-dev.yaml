@@ -1,4 +1,4 @@
-#enabled: true
+enabled: true
 image:
   #  repository: nginx
   pullPolicy: IfNotPresent
