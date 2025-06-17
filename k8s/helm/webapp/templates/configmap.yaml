@@ -1,0 +1,17 @@
+# configmap
+{{- if and .Values.enabled .Values.configMap -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.webapp.fullname }}-{{ .Values.service.name }}
+  labels:
+    {{- range $key, $value := .Values.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  data:
+    {{- with $.Values.configMap }}
+    {{- toYaml . | nindent 2 }}
+    {{- end }}
+{{- end }}
+
