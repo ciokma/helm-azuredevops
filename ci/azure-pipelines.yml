@@ -1,0 +1,47 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - "k8s/helm/webapp/*"
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  chartPath: 'k8s/helm/webapp'
+  valuesFile: 'k8s/helm/webapp/values-dev.yaml'
+  releaseName: 'webapp'
+  namespace: 'default'
+
+stages:
+- stage: Deploy
+  displayName: 'Helm Deploy Stage'
+  jobs:
+  - job: HelmDeploy
+    displayName: 'Helm Deploy Job'
+    steps:
+    - checkout: self  # Clona tu repositorio desde GitHub
+
+    - task: HelmInstaller@1
+      displayName: 'Install Helm'
+      inputs:
+        helmVersionToInstall: 'latest'
+
+    - script: |
+        echo "$(KUBECONFIG_CONTENT)" > $(System.DefaultWorkingDirectory)/kubeconfig
+      displayName: 'Generate kubeconfig file'
+
+    - task: HelmDeploy@1
+      displayName: 'Deploy Helm Chart'
+      inputs:
+        connectionType: 'Kubernetes Configuration'
+        kubernetesConfig: '$(System.DefaultWorkingDirectory)/kubeconfig'
+        namespace: '$(namespace)'
+        command: 'upgrade'
+        chartType: 'FilePath'
+        chartPath: '$(chartPath)'
+        releaseName: '$(releaseName)'
+        valueFile: '$(valuesFile)'
