@@ -2,10 +2,10 @@
 apiVersion: apps/v1
 kind: Deployment 
 metadata:
-  #name: {{ include "webapp.fullname" . }}
-  name: null
+  name: {{ include "webapp.fullname" . }}
+   
   labels:
-    {{- include "webapp.labels" . | nindent 4 }}
+    # {{- include "webapp.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
