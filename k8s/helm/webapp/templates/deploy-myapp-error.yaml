@@ -1,4 +1,3 @@
-# templates/deploy-myapp-error.yaml
 {{- if .Values.createDeployment }}
 apiVersion: apps/v1
 kind: Deployment
