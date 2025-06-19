@@ -23,6 +23,9 @@ spec:
       labels:
         {{- include "webapp.selectorLabels" . | nindent 8 }}
     spec:
+      {{- if .Values.tolerations }}
+      {{ -toYaml .Values.tolerations | nindent 8}}
+      {{- end}}
       containers:
         - name: nginx
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

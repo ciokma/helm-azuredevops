@@ -16,3 +16,9 @@ configMap:
   PUBLIC_URL_DUMMY: "https://dummy-url.com"
 webapp:
   fullname: "webapp"
+
+  tolerations:
+    - key: "node-role.kubernetes.io/workload"
+      operator: "Equal"
+      value: "apps"
+      effect: "NoSchedule"
