@@ -1,0 +1,44 @@
+# === Terraform ===
+*.tfstate
+*.tfstate.backup
+*.tfvars
+*.tfvars.json
+.terraform/
+.terraform.lock.hcl
+crash.log
+override.tf
+override.tf.json
+terraform.tfstate
+terraform.tfstate.backup
+
+# Optional: local override files
+*_override.tf
+*_override.tf.json
+
+# === Helm ===
+# Chart dependencies (like those from 'helm dependency update')
+charts/
+Chart.lock
+
+# Helm release metadata
+release.yaml
+values.yaml.secret*
+secrets.yaml
+*.tgz
+
+# === General ===
+# Editor/IDE
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+*.bak
+
+# Logs
+*.log
+
+# === Linux + Bash ===
+*.tar.gz
+*.tmp
+*.out
