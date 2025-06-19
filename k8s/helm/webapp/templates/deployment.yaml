@@ -3,9 +3,8 @@ apiVersion: apps/v1
 kind: Deployment 
 metadata:
   name: {{ include "webapp.fullname" . }}
-   
   labels:
-    # {{- include "webapp.labels" . | nindent 4 }}
+    {{- include "webapp.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
@@ -24,8 +23,9 @@ spec:
         {{- include "webapp.selectorLabels" . | nindent 8 }}
     spec:
       {{- if .Values.tolerations }}
-      {{- toYaml .Values.tolerations | nindent 8}}
-      {{- end}}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+      {{- end }}
       containers:
         - name: nginx
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -33,4 +33,3 @@ spec:
           ports:
             - containerPort: {{ .Values.containerPort }}
 {{- end }}
-
