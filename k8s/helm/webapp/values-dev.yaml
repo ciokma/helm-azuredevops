@@ -17,8 +17,8 @@ configMap:
 webapp:
   fullname: "webapp"
 
-  tolerations:
-    - key: "node-role.kubernetes.io/workload"
-      operator: "Equal"
-      value: "apps"
-      effect: "NoSchedule"
+tolerations:
+  - key: "node-role.kubernetes.io/workload"
+    operator: "Equal"
+    value: "apps"
+    effect: "NoSchedule"
