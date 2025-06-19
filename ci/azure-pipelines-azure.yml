@@ -10,7 +10,7 @@ trigger:
 #pool:
 #  vmImage: 'ubuntu-latest'
 pool:
-  name: azure-cli-ec2-agent
+  name: azure-cli-ec2
 
 variables:
   chartPath: 'k8s/helm/webapp'
