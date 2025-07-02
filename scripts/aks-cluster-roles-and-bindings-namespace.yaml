@@ -1,0 +1,88 @@
+# ClusterRole: Admin (control total)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: clusterrole-admin
+rules:
+- apiGroups: ["", "apps", "extensions", "batch", "autoscaling", "rbac.authorization.k8s.io", "*"]
+  resources: ["*"]
+  verbs: ["*"]
+---
+# ClusterRole: Developer
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: clusterrole-dev
+rules:
+- apiGroups: ["", "apps"]
+  resources: ["pods", "services", "deployments", "replicasets", "configmaps"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+---
+# ClusterRole: QA (solo lectura)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: clusterrole-qa
+rules:
+- apiGroups: ["", "apps"]
+  resources: ["pods", "services", "deployments", "replicasets"]
+  verbs: ["get", "list", "watch"]
+---
+# ClusterRole: Viewer (acceso mínimo + logs)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: clusterrole-viewer
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get"]
+---
+
+# RoleBinding: aks-admins (namespace: development)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bind-admin-group
+  namespace: development
+subjects:
+- kind: Group
+  name: "de8d606b-8869-4433-8be0-8bf4703ec810"
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: clusterrole-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding: aks-dev-users (namespace: development)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bind-dev-group
+  namespace: development
+subjects:
+- kind: Group
+  name: "6dd93a15-85e4-4693-a5fd-78236cf39b7d"
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: clusterrole-dev
+  apiGroup: rbac.authorization.k8s.io
+---
+# RoleBinding: aks-readonly-users (namespace: development)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bind-viewer-group
+  namespace: development
+subjects:
+- kind: Group
+  name: "622c4a8f-4d52-41f7-a936-39281b0d1e26"
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: clusterrole-viewer
+  apiGroup: rbac.authorization.k8s.io

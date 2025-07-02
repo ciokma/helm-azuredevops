@@ -11,7 +11,7 @@ variable "aks_cluster_name" {
 }
 
 variable "node_size" {
-  default = "Standard_B2s" # $0.02–$0.05 USD por hora
+  default = "Standard_B2s" # $0.02–$0.05 USD por hora Standard_B1s
 }
 
 variable "node_count" {
