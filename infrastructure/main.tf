@@ -8,17 +8,8 @@ resource "azurerm_kubernetes_cluster" "k8s" {
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = "k8s-${var.aks_cluster_name}"
-  # Activa Azure RBAC para el API server de Kubernetes.
-  # Permite controlar el acceso desde Azure, 
-  # en lugar de usar archivos RoleBinding/ClusterRoleBinding tradicionales en YAML.
-  azure_active_directory_role_based_access_control {
-    azure_rbac_enabled = true # (Optional) 
-    admin_group_object_ids = [
-    "de8d606b-8869-4433-8be0-8bf4703ec810" # ID de grupo de admins
-    ]
-    managed = true
-    #tenant_id = ( optional )
-  }
+  role_based_access_control_enabled = true
+
   default_node_pool {
     name       = "default"
     node_count = var.node_count

@@ -22,3 +22,35 @@ variable "node_pool_name" {
     description = "the user node pool name(for k8s workloas other than system)"  
     default = "aksnodepool"
 }
+
+# vars
+variable "aks_admins_group_id" {
+  type        = string
+  description = "Object ID del grupo aks-admins"
+}
+
+variable "aks_dev_users_group_id" {
+  type        = string
+  description = "Object ID del grupo aks-dev-users"
+}
+
+variable "aks_readonly_users_group_id" {
+  type        = string
+  description = "Object ID del grupo aks-readonly-users"
+}
+
+variable "aks_readonly_higher_group_id" {
+  type        = string
+  description = "Object ID del grupo aks-readonly-higher-users"
+}
+
+variable "dev_namespaces" {
+  type        = list(string)
+  description = "Namespaces where development users will have admin permissions"
+  default     = ["ns1", "ns2", "ns3", "ns4", "ns5", "ns6", "ns7", "ns8", "ns9", "ns10", "ns11", "ns12"]
+}
+variable "readonly_namespaces" {
+  type        = list(string)
+  description = "Namespaces where readonly users will have read-only access"
+  default     = ["ns1", "ns2", "ns3", "ns4", "ns5", "ns6", "ns7", "ns8", "ns9", "ns10", "ns11", "ns12",]
+}

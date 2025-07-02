@@ -1,0 +1,126 @@
+# ---------------------------------------------------
+# ClusterRole: Admin — full access
+# ---------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: aks-admin
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+
+---
+# ---------------------------------------------------
+# ClusterRole: Developer — write access in dev
+# ---------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: aks-dev
+rules:
+- apiGroups: ["", "apps", "batch", "extensions", "networking.k8s.io"]
+  resources: ["*"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+---
+# ---------------------------------------------------
+# ClusterRole: ReadOnly — read-only access
+# ---------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: aks-readonly
+rules:
+- apiGroups: ["", "apps", "batch", "extensions", "networking.k8s.io"]
+  resources: ["*"]
+  verbs: ["get", "list", "watch"]
+
+---
+# ---------------------------------------------------
+# ClusterRoleBinding: Admins — cluster-wide full access
+# ---------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: aks-admins-binding
+subjects:
+- kind: Group
+  name: de8d606b-8869-4433-8be0-8bf4703ec810 # aks-admins
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: aks-admin
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# ---------------------------------------------------
+# RoleBinding: Dev users — admin in DEV namespace
+# ---------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: aks-dev-users-binding
+  namespace: uaip-dev
+subjects:
+- kind: Group
+  name: 6dd93a15-85e4-4693-a5fd-78236cf39b7d # aks-dev-users
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: aks-dev
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# ---------------------------------------------------
+# RoleBinding: Dev users — read-only in UAT namespace
+# ---------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: aks-dev-users-readonly
+  namespace: uaip-uat
+subjects:
+- kind: Group
+  name: 6dd93a15-85e4-4693-a5fd-78236cf39b7d # aks-dev-users
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: aks-readonly
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# ---------------------------------------------------
+# RoleBinding: Dev users — read-only in PROD namespace
+# ---------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: aks-dev-users-readonly
+  namespace: uaip-prod
+subjects:
+- kind: Group
+  name: 6dd93a15-85e4-4693-a5fd-78236cf39b7d # aks-dev-users
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: aks-readonly
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# ---------------------------------------------------
+# RoleBinding: ReadOnly users — read-only in PROD namespace
+# ---------------------------------------------------
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: aks-readonly-users-binding
+  namespace: uaip-prod
+subjects:
+- kind: Group
+  name: 622c4a8f-4d52-41f7-a936-39281b0d1e26 # aks-readonly-users
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: aks-readonly
+  apiGroup: rbac.authorization.k8s.io

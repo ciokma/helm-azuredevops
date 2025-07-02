@@ -1,0 +1,47 @@
+# # Asignación para grupo aks-admins (Rol de administrador del clúster completo)
+# resource "azurerm_role_assignment" "aks_admins" {
+#   principal_id         = var.aks_admins_group_id
+#   role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
+#   scope                = azurerm_kubernetes_cluster.k8s.id
+# }
+
+# # Asignación para grupo aks-readonly-users (Rol de solo lectura para todo el clúster)
+# resource "azurerm_role_assignment" "aks_readonly" {
+#   principal_id         = var.aks_readonly_group_id
+#   role_definition_name = "Azure Kubernetes Service RBAC Reader"
+#   scope                = azurerm_kubernetes_cluster.k8s.id
+# }
+
+# # Azure Kubernetes Service Cluster User Role para grupo readonly (opcional)
+# resource "azurerm_role_assignment" "aks_cluster_user_role_viewer" {
+#   principal_id         = var.aks_readonly_group_id
+#   role_definition_name = "Azure Kubernetes Service Cluster User Role"
+#   scope                = azurerm_kubernetes_cluster.k8s.id
+# }
+# resource "azurerm_role_assignment" "aks_cluster_user_role_dev" {
+#   principal_id         = var.aks_devs_group_id
+#   role_definition_name = "Azure Kubernetes Service Cluster User Role"
+#   scope                = azurerm_kubernetes_cluster.k8s.id
+# }
+
+
+# # Rol Admin a nivel de clúster para Devs (si se desea además del rol en namespaces)
+# resource "azurerm_role_assignment" "aks_devs_user_role" {
+#   principal_id         = var.aks_devs_group_id
+#   role_definition_name = "Azure Kubernetes Service RBAC Admin"
+#   scope                = azurerm_kubernetes_cluster.k8s.id
+# }
+
+# # Asignación para grupo aks-dev-users (Rol Admin solo en namespace 'temporal')
+# resource "azurerm_role_assignment" "aks_devs_temporal" {
+#   principal_id         = var.aks_devs_group_id
+#   role_definition_name = "Azure Kubernetes Service RBAC Admin"
+#   scope                = "${azurerm_kubernetes_cluster.k8s.id}/namespaces/temporal"
+# }
+
+# # Asignación para grupo aks-dev-users (Rol Admin solo en namespace 'eyqab-dev')
+# resource "azurerm_role_assignment" "aks_devs_eyqab" {
+#   principal_id         = var.aks_devs_group_id
+#   role_definition_name = "Azure Kubernetes Service RBAC Admin"
+#   scope                = "${azurerm_kubernetes_cluster.k8s.id}/namespaces/eyqab-dev"
+# }
