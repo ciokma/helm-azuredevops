@@ -54,3 +54,12 @@ variable "readonly_namespaces" {
   description = "Namespaces where readonly users will have read-only access"
   default     = ["ns1", "ns2", "ns3", "ns4", "ns5", "ns6", "ns7", "ns8", "ns9", "ns10", "ns11", "ns12",]
 }
+variable "subscription_id" { 
+  type = string 
+}
+variable "tenant_id" {
+  type = string
+}
+variable "role_based_access_control_enabled" {
+  type = string
+}

@@ -8,8 +8,12 @@ resource "azurerm_kubernetes_cluster" "k8s" {
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = "k8s-${var.aks_cluster_name}"
-  role_based_access_control_enabled = true
-
+  # disable rbac
+  #- (Optional) Whether Role Based Access Control for the Kubernetes Cluster
+  # should be enabled. Defaults to true. Changing this forces a new resource 
+  # to be created.
+  role_based_access_control_enabled = var.role_based_access_control_enabled
+  
   default_node_pool {
     name       = "default"
     node_count = var.node_count
