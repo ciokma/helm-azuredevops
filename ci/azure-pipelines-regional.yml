@@ -7,10 +7,9 @@ trigger:
     include:
       - "k8s/helm/webapp/*"
 
-#pool:
-#  vmImage: 'ubuntu-latest'
+
 pool:
-  name: 'Azure Pipelines'
+  name: Azure Pipelines
 
 variables:
 
