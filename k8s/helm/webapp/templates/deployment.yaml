@@ -22,7 +22,6 @@ spec:
       labels:
         {{- include "webapp.selectorLabels" . | nindent 8 }}
     spec:
-      serviceAccountName: azdev-sa-780794
       {{- if .Values.tolerations }}
       tolerations:
         {{- toYaml .Values.tolerations | nindent 8 }}
