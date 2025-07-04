@@ -28,13 +28,13 @@ variables:
   - name: repositoryName
     value: "acrregistryciokmauedev.azurecr.io"
   - name: repositoryRG
-    value: "aks-us-test-rg"  # <-- esta línea estaba faltando
+    value: "aks-us-test-rg"
   - name: kubernetesServiceEndpoint
     value: "k8s Service Connection - Dev US"
   - name: kubernetesServiceEndpointEU
     value: "k8s Service Connection - Dev EU"
   - name: deployToEU
-    value: false  # disable just for test
+    value: false  # cambia a true cuando quieras habilitarlo
   - name: environment
     value: "dev-us"
 
@@ -42,7 +42,6 @@ stages:
 - stage: Deploy_Manifests
   displayName: "Deploy Manifests"
   jobs:
-
     - job: DeployUS
       displayName: "Deploy to US"
       steps:
@@ -51,27 +50,28 @@ stages:
             azureRMServiceConnection: "Terraform Dev"
             chartVersion: "0.1.0"
             environment: $(environment)
-            kubernetesServiceEndpoint: $(kubernetesServiceEndpoint)  # corregido
+            kubernetesServiceEndpoint: $(kubernetesServiceEndpoint)
             namespace: "dev"
             registryConnection: $(registryConnection)
             repositoryName: $(repositoryName)
             repositoryRG: $(repositoryRG)
-            serviceName: webapp  # corregido para usar nombre de servicio
+            serviceName: webapp
             imageTag: $(Build.BuildNumber)
 
-    - job: DeployEU
-      displayName: "Deploy to EU"
-      condition: eq(variables['deployToEU'], true)
-      steps:
-        - template: templates/task/helm-deploy-manifest.yaml
-          parameters:
-            azureRMServiceConnection: "Terraform Dev"
-            chartVersion: "0.1.0"
-            environment: $(environment)
-            kubernetesServiceEndpoint: $(kubernetesServiceEndpointEU)  # corregido
-            namespace: "dev"
-            registryConnection: $(registryConnection)
-            repositoryName: $(repositoryName)
-            repositoryRG: $(repositoryRG)
-            serviceName: webapp  # corregido
-            imageTag: $(Build.BuildNumber)
+    # Este bloque solo se incluirá si deployToEU es true
+    - ${{ if eq(variables['deployToEU'], true) }}:
+      - job: DeployEU
+        displayName: "Deploy to EU"
+        steps:
+          - template: ../templates/task/helm-deploy-manifest.yaml
+            parameters:
+              azureRMServiceConnection: "Terraform Dev"
+              chartVersion: "0.1.0"
+              environment: $(environment)
+              kubernetesServiceEndpoint: $(kubernetesServiceEndpointEU)
+              namespace: "dev"
+              registryConnection: $(registryConnection)
+              repositoryName: $(repositoryName)
+              repositoryRG: $(repositoryRG)
+              serviceName: webapp
+              imageTag: $(Build.BuildNumber)
