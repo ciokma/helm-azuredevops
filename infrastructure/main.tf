@@ -13,7 +13,10 @@ resource "azurerm_kubernetes_cluster" "k8s" {
   # should be enabled. Defaults to true. Changing this forces a new resource 
   # to be created.
   role_based_access_control_enabled = var.role_based_access_control_enabled
-  
+  azure_active_directory_role_based_access_control {
+    azure_rbac_enabled     = false
+    tenant_id = var.tenant_id
+  }
   default_node_pool {
     name       = "default"
     node_count = var.node_count
