@@ -38,6 +38,7 @@ steps:
   - task: HelmDeploy@1
     displayName: 'Deploy Helm Chart to AKS'
     inputs:
+      arguments: "--values k8s/helm/webapp/values-dev-us.yaml"
       azureSubscriptionForACR: ${{ parameters.azureRMServiceConnection }}
       azureResourceGroupForACR: ${{ parameters.repositoryRG }}
       azureContainerRegistry: ${{ parameters.repositoryName }}
