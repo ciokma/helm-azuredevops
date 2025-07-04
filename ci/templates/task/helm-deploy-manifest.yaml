@@ -1,28 +1,28 @@
 parameters:
   - name: azureRMServiceConnection
-    value: string
+    type: string
   - name: registryConnection
-    value: string
+    type: string
     default: "Registry Dev Connection"
   - name: namespace
-    value: string
+    type: string
   - name: kubernetesServiceEndpoint
-    value: string
+    type: string
   - name: chartType
     type: string
     default: "name"
   - name: serviceName
-    value: string
+    type: string
   - name: environment
-    value: string
+    type: string
   - name: chartVersion
-    value: string
+    type: string
   - name: imageTag
-    value: string
+    type: string
   - name: repositoryName
-    value: string
+    type: string
   - name: repositoryRG
-    value: string
+    type: string
 
 steps:
   - task: AzureCLI@2
