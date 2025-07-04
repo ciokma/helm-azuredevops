@@ -29,7 +29,7 @@ variables:
   - name: kubernetesServiceEndpoint
     value: "k8s Service Connection - Dev US"
   - name: namespace
-    value: "dev"
+    value: "default" # cambiando a default porque dev daba error
   - name: deployToEU
     value: false
   - name: kubernetesServiceEndpointEU
