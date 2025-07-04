@@ -1,5 +1,4 @@
 trigger:
-  batch: true
   branches:
     include:
       - main
@@ -11,67 +10,66 @@ pool:
   name: Azure Pipelines
 
 variables:
-  - name: chartPath
-    value: 'k8s/helm/webapp'
-  - name: valuesFile
-    value: 'k8s/helm/webapp/values-dev-us.yaml'
-  - name: releaseName
-    value: 'webapp'
-  - name: namespace
-    value: 'default'
-  - name: imageName
-    value: test
-  - name: sourceCodeDir
-    value: "k8s/webapp"
-  - name: registryConnection
-    value: "Registry Dev Connection"
-  - name: repositoryName
-    value: "acrregistryciokmauedev.azurecr.io"
-  - name: repositoryRG
-    value: "aks-us-test-rg"
-  - name: kubernetesServiceEndpoint
-    value: "k8s Service Connection - Dev US"
-  - name: kubernetesServiceEndpointEU
-    value: "k8s Service Connection - Dev EU"
-  - name: deployToEU
-    value: false  # cambia a true cuando quieras habilitarlo
   - name: environment
     value: "dev-us"
+  - name: registryConnection
+    value: "Registry Dev Connection"
+  - name: azureRMServiceConnection
+    value: "Terraform Dev"
+  - name: repositoryName
+    value: "acrregistryciokmauedev"
+  - name: repositoryRG
+    value: "aks-us-test-rg"
+  - name: serviceName
+    value: "webapp"
+  - name: chartVersion
+    value: "0.1.0"
+  - name: imageTag
+    value: $(Build.BuildNumber)
+  - name: kubernetesServiceEndpoint
+    value: "k8s Service Connection - Dev US"
+  - name: namespace
+    value: "dev"
+  - name: deployToEU
+    value: false
+  - name: kubernetesServiceEndpointEU
+    value: "k8s Service Connection - Dev EU"
 
 stages:
-- stage: Deploy_Manifests
-  displayName: "Deploy Manifests"
+- stage: Deploy_Chart
+  displayName: "Deploy Helm Chart"
   jobs:
     - job: DeployUS
       displayName: "Deploy to US"
       steps:
         - template: templates/task/helm-deploy-manifest.yaml
           parameters:
-            azureRMServiceConnection: "Terraform Dev"
-            chartVersion: "0.1.0"
-            environment: $(environment)
-            kubernetesServiceEndpoint: $(kubernetesServiceEndpoint)
-            namespace: "dev"
+            azureRMServiceConnection: $(azureRMServiceConnection)
             registryConnection: $(registryConnection)
+            namespace: $(namespace)
+            kubernetesServiceEndpoint: $(kubernetesServiceEndpoint)
+            chartType: "name"
+            serviceName: $(serviceName)
+            environment: $(environment)
+            chartVersion: $(chartVersion)
+            imageTag: $(imageTag)
             repositoryName: $(repositoryName)
             repositoryRG: $(repositoryRG)
-            serviceName: webapp
-            imageTag: $(Build.BuildNumber)
 
-    # Este bloque solo se incluirá si deployToEU es true
     - ${{ if eq(variables['deployToEU'], true) }}:
       - job: DeployEU
         displayName: "Deploy to EU"
         steps:
-          - template: ../templates/task/helm-deploy-manifest.yaml
+          - template: templates/task/helm-deploy-manifest.yaml
             parameters:
-              azureRMServiceConnection: "Terraform Dev"
-              chartVersion: "0.1.0"
-              environment: $(environment)
-              kubernetesServiceEndpoint: $(kubernetesServiceEndpointEU)
-              namespace: "dev"
+              azureRMServiceConnection: $(azureRMServiceConnection)
               registryConnection: $(registryConnection)
+              namespace: $(namespace)
+              kubernetesServiceEndpoint: $(kubernetesServiceEndpointEU)
+              chartType: "name"
+              serviceName: $(serviceName)
+              environment: $(environment)
+              chartVersion: $(chartVersion)
+              imageTag: $(imageTag)
               repositoryName: $(repositoryName)
               repositoryRG: $(repositoryRG)
-              serviceName: webapp
-              imageTag: $(Build.BuildNumber)

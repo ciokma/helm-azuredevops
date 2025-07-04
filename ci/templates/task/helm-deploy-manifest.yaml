@@ -26,35 +26,27 @@ parameters:
 
 steps:
   - task: AzureCLI@2
-    displayName: 'Log into Azure Container Registry'
+    displayName: 'Login to Azure ACR'
     inputs:
-      azureSuscription: ${{ parameters.azureRMServiceConnection}}
+      azureSubscription: ${{ parameters.azureRMServiceConnection }}
       scriptType: pscore
       addSpnToEnvironment: true
       scriptLocation: inlineScript
       inlineScript: |
-        az acr login --name ${{ parameters.repositoryName}}
-
-
+        az acr login --name ${{ parameters.repositoryName }}
 
   - task: HelmDeploy@1
-    displayName: 'Deploy Helm Chart'
+    displayName: 'Deploy Helm Chart to AKS'
     inputs:
-      
-      arguments: "--values k8s/helm/webapp/values-${{parameters.environment }}.yaml"
-      azureSuscriptionForACR: '${{ parameters.azureRMServiceConnection }}'
-      azureResourceGroupForACR: '${{ parameters.repositoryRG }}'
-      azureContainerRegistry: '${{ parameters.repositoryName }}'
+      azureSubscriptionForACR: ${{ parameters.azureRMServiceConnection }}
+      azureResourceGroupForACR: ${{ parameters.repositoryRG }}
+      azureContainerRegistry: ${{ parameters.repositoryName }}
       chartType: 'Name'
-      chartName: 'oci://${{ parameters.repositoryName }}/charts/${{ parameters.serviceName }}'
+      chartName: 'oci://${{ parameters.repositoryName }}.azurecr.io/charts/${{ parameters.serviceName }}'
       chartVersion: ${{ parameters.chartVersion }}
-      command: 'upgrade'
+      command: upgrade
       install: true
       kubernetesServiceEndpoint: ${{ parameters.kubernetesServiceEndpoint }}
       namespace: ${{ parameters.namespace }}
       releaseName: ${{ parameters.serviceName }}
-      valueFile: k8s/helm/${{ parameters.serviceName }}/values-${{parameters.environment }}.yaml
-
-      
-      
-     
+      valueFile: k8s/helm/${{ parameters.serviceName }}/values-${{ parameters.environment }}.yaml
