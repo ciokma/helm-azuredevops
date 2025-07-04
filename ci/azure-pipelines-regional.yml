@@ -7,75 +7,71 @@ trigger:
     include:
       - "k8s/helm/webapp/*"
 
-
 pool:
   name: Azure Pipelines
 
 variables:
-
-- name: chartPath
-  value:  'k8s/helm/webapp'
-- name: valuesFile
-  value: 'k8s/helm/webapp/values-dev-us.yaml'
-- name: releaseName
-  value: 'webapp'
-- name: namespace
-  value: 'default'
-- name: imageName
-  value: test
-- name: sourceCodeDir
-  value: "k8s/webapp"
-- name: registryConnection
-  value: "Registry Dev Connection"
-- name: repositoryName
-  value: "acrregistryciokmauedev.azurecr.io"
-
-- name: repositoryGroup
-  value: "aks-us-test-rg"
-- name: kubernetesServiceEndpoint
-  value: "k8s Service Connection - Dev US"
-- name: kubernetesServiceEndpointEU
-  value: "k8s Service Connection - Dev EU"
-- name: deployToEU
-  value: false  # disable just for test
-- name: environment
-  value: "dev-us"
-
+  - name: chartPath
+    value: 'k8s/helm/webapp'
+  - name: valuesFile
+    value: 'k8s/helm/webapp/values-dev-us.yaml'
+  - name: releaseName
+    value: 'webapp'
+  - name: namespace
+    value: 'default'
+  - name: imageName
+    value: test
+  - name: sourceCodeDir
+    value: "k8s/webapp"
+  - name: registryConnection
+    value: "Registry Dev Connection"
+  - name: repositoryName
+    value: "acrregistryciokmauedev.azurecr.io"
+  - name: repositoryRG
+    value: "aks-us-test-rg"  # <-- esta línea estaba faltando
+  - name: kubernetesServiceEndpoint
+    value: "k8s Service Connection - Dev US"
+  - name: kubernetesServiceEndpointEU
+    value: "k8s Service Connection - Dev EU"
+  - name: deployToEU
+    value: false  # disable just for test
+  - name: environment
+    value: "dev-us"
 
 stages:
-
 - stage: Deploy_Manifests
   displayName: "Deploy Manifests"
   jobs:
+
     - job: DeployUS
       displayName: "Deploy to US"
       steps:
-      - template: templates/task/helm-deploy-manifest.yaml
-        parameters:
-          azureRMServiceConnection: "Terraform Dev"
-          chartVersion: "0.1.0"
-          environment: $(environment)
-          kubernetesServiceEndpoint: $(kubernetesServiceEndoint)
-          namespace: "dev"
-          registryConnection: $(registryConnection)
-          repositoryName: $(repositoryName)
-          repositoryRG: $(repositoryRG)
-          serviceName: $(sourceCodeDir)
-          imageTag: $(Build.BuildNumber)
-      
+        - template: templates/task/helm-deploy-manifest.yaml
+          parameters:
+            azureRMServiceConnection: "Terraform Dev"
+            chartVersion: "0.1.0"
+            environment: $(environment)
+            kubernetesServiceEndpoint: $(kubernetesServiceEndpoint)  # corregido
+            namespace: "dev"
+            registryConnection: $(registryConnection)
+            repositoryName: $(repositoryName)
+            repositoryRG: $(repositoryRG)
+            serviceName: webapp  # corregido para usar nombre de servicio
+            imageTag: $(Build.BuildNumber)
+
     - job: DeployEU
       displayName: "Deploy to EU"
       condition: eq(variables['deployToEU'], true)
       steps:
-      - template: ../templates/task/helm-deploy-manifest.yaml
-        parameters:
-          azureRMServiceConnection: "Terraform Dev"
-          chartVersion: "0.1.0"
-          environment: $(environment)
-          kubernetesServiceEndpoint: $(kubernetesServiceEndoint)
-          namespace: "dev"
-          registryConnection: $(registryConnection)
-          repositoryName: $(repositoryName)
-          repositoryRG: $(repositoryRG)
-          serviceName: $(sourceCodeDir)
-          imageTag: $(Build.BuildNumber)
+        - template: templates/task/helm-deploy-manifest.yaml
+          parameters:
+            azureRMServiceConnection: "Terraform Dev"
+            chartVersion: "0.1.0"
+            environment: $(environment)
+            kubernetesServiceEndpoint: $(kubernetesServiceEndpointEU)  # corregido
+            namespace: "dev"
+            registryConnection: $(registryConnection)
+            repositoryName: $(repositoryName)
+            repositoryRG: $(repositoryRG)
+            serviceName: webapp  # corregido
+            imageTag: $(Build.BuildNumber)
