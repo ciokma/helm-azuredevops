@@ -51,7 +51,7 @@ stages:
     - job: DeployUS
       displayName: "Deploy to US"
       steps:
-      - template: ../templates/task/helm-deploy-manifest.yaml
+      - template: templates/task/helm-deploy-manifest.yaml
         parameters:
           azureRMServiceConnection: "Terraform Dev"
           chartVersion: "0.1.0"
