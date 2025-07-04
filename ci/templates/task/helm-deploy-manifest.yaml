@@ -1,0 +1,60 @@
+parameters:
+  - name: azureRMServiceConnection
+    value: string
+  - name: registryConnection
+    value: string
+    default: "Registry Dev Connection"
+  - name: namespace
+    value: string
+  - name: kubernetesServiceEndpoint
+    value: string
+  - name: chartType
+    type: string
+    default: "name"
+  - name: serviceName
+    value: string
+  - name: environment
+    value: string
+  - name: chartVersion
+    value: string
+  - name: imageTag
+    value: string
+  - name: repositoryName
+    value: string
+  - name: repositoryRG
+    value: string
+
+steps:
+  - task: AzureCLI@2
+    displayName: 'Log into Azure Container Registry'
+    inputs:
+      azureSuscription: ${{ parameters.azureRMServiceConnection}}
+      scriptType: pscore
+      addSpnToEnvironment: true
+      scriptLocation: inlineScript
+      inlineScript: |
+        az acr login --name ${{ parameters.repositoryName}}
+
+
+
+  - task: HelmDeploy@1
+    displayName: 'Deploy Helm Chart'
+    inputs:
+      
+      arguments: "--values k8s/helm/webapp/values-${{parameters.environment }}.yaml"
+      azureSuscriptionForACR: '${{ parameters.azureRMServiceConnection }}'
+      azureResourceGroupForACR: '${{ parameters.repositoryRG }}'
+      azureContainerRegistry: '${{ parameters.repositoryName }}'
+      chartType: 'Name'
+      chartName: 'oci://${{ parameters.repositoryName }}/charts/${{ parameters.serviceName }}'
+      chartVersion: ${{ parameters.chartVersion }}
+      command: 'upgrade'
+      install: true
+      kubernetesServiceEndpoint: ${{ parameters.kubernetesServiceEndpoint }}
+      namespace: ${{ parameters.namespace }}
+      releaseName: ${{ parameters.serviceName }}
+      valueFile: k8s/helm/${{ parameters.serviceName }}/values-${{parameters.environment }}.yaml
+
+      
+      
+     
