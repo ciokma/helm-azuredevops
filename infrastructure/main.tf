@@ -1,41 +1,37 @@
-resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
-  location = var.location
+provider "azurerm" {
+  features        {}
+  subscription_id = var.subscription_id
+  tenant_id       = var.tenant_id
 }
 
-resource "azurerm_kubernetes_cluster" "k8s" {
-  name                = var.aks_cluster_name
-  location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
-  dns_prefix          = "k8s-${var.aks_cluster_name}"
-  # disable rbac
-  #- (Optional) Whether Role Based Access Control for the Kubernetes Cluster
-  # should be enabled. Defaults to true. Changing this forces a new resource 
-  # to be created.
-  role_based_access_control_enabled = var.role_based_access_control_enabled
-  azure_active_directory_role_based_access_control {
-    azure_rbac_enabled     = false
-    tenant_id = var.tenant_id
-  }
-  default_node_pool {
-    name       = "default"
-    node_count = var.node_count
-    vm_size    = var.node_size
-    #others
-    only_critical_addons_enabled = true
-    upgrade_settings {
-      drain_timeout_in_minutes = 0
-      max_surge = "40%"
-      node_soak_duration_in_minutes = 0
-    }
-    
-  }
+module "aks_us" {
+  source = "./modules/aks_cluster"
 
-  identity {
-    type = "SystemAssigned"
-  }
+  resource_group_name               = "rg-dev-eastus"
+  location                          = "eastus"
+  aks_cluster_name                  = "aks-us-cluster"
+  node_pool_name                    = "usapps"
+  node_size                         = "Standard_B2s"
+  node_count                        = 1
+  tenant_id                         = var.tenant_id
+  role_based_access_control_enabled = true
+  environment                       = "Test"
+  kubernetes_version                = "1.32.4"
+  azure_rbac_enabled                = var.azure_rbac_enabled
+}
 
-  tags = {
-    Environment = "Test"
-  }
+module "aks_eu" {
+  source = "./modules/aks_cluster"
+
+  resource_group_name               = "rg-dev-westeurope"
+  location                          = "westeurope"
+  aks_cluster_name                  = "aks-eu-cluster"
+  node_pool_name                    = "euapps"
+  node_size                         = "Standard_B2s"
+  node_count                        = 1
+  tenant_id                         = var.tenant_id
+  role_based_access_control_enabled = true
+  environment                       = "Test"
+  kubernetes_version                = "1.32.4"
+  azure_rbac_enabled                = var.azure_rbac_enabled
 }
