@@ -15,7 +15,7 @@ variables:
   - name: registryConnection
     value: "Registry Dev Connection"
   - name: azureRMServiceConnection
-    value: "Terraform Dev"
+    value: "Terraform Dev" # this is a rm to connect to ACR
   - name: repositoryName
     value: "acrregistryciokmauedev"
   - name: repositoryRG
