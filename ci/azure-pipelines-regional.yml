@@ -30,6 +30,8 @@ variables:
     value: "k8s Service Connection - Dev US"
   - name: namespace
     value: "default" # cambiando a default porque dev daba error
+  - name: deployToUS
+    value: false # activando variable para us
   - name: deployToEU
     value: true # activando variable para europa
   - name: kubernetesServiceEndpointEU
@@ -39,6 +41,7 @@ stages:
 - stage: Deploy_Chart
   displayName: "Deploy Helm Chart"
   jobs:
+  - ${{ if eq(variables['deployToUS'], true) }}:
     - job: DeployUS
       displayName: "Deploy to US"
       steps:
