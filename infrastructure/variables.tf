@@ -63,3 +63,13 @@ variable "tenant_id" {
 variable "role_based_access_control_enabled" {
   type = string
 }
+variable "admin_group_object_id" {
+  description = "Azure AD group object ID to grant cluster-admin access"
+}
+
+variable "azure_rbac_enabled" {
+  description = "azure rbac enable or not" 
+}
+variable "kubernetes_version" {
+  description = "kubernetes version"
+}

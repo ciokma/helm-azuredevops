@@ -1,0 +1,28 @@
+rbacGroups:
+  - name: it-admin-highersenvs
+    objectId: 3fdd4bd7-7716-4a1e-b7bc-7d8ae9c1870d
+    rules:
+      - apiGroups: ["*"]
+        resources: ["*"]
+        verbs: ["*"]
+
+  - name: it-admin-lowersenvs
+    objectId: 48d01c58-5199-4fd4-bae6-3eabaceb30c0
+    rules:
+      - apiGroups: ["*"]
+        resources: ["*"]
+        verbs: ["get", "list", "watch"]
+
+  - name: it-users-highersenvs
+    objectId: 3fdd4bd7-7716-4a1e-b7bc-7d8ae9c1870d
+    rules:
+      - apiGroups: ["*"]
+        resources: ["*"]
+        verbs: ["get", "list", "watch"]
+
+  - name: it-users-lowersenvs
+    objectId: 622c4a8f-4d52-41f7-a936-39281b0d1e26 # 48d01c58-5199-4fd4-bae6-3eabaceb30c0
+    rules:
+      - apiGroups: ["*"]
+        resources: ["*"]
+        verbs: ["get", "list", "watch"]
