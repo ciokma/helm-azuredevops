@@ -1,0 +1,8 @@
+trigger:
+- test-shared-connection
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- script: echo "Hola mundo desde Azure Pipelines 🚀"
+  displayName: 'Mensaje de prueba'
