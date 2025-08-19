@@ -1,0 +1,51 @@
+trigger: none
+pr: none
+
+schedules:
+  - cron: "05 0 * * *" # Runs every night at midnight
+    displayName: "Nightly Qdrant Volume Snapshot Pipeline"
+    branches:
+      include:
+        - main
+    always: true
+
+pool:
+  name: "Azure Pipelines" # pool name
+
+variables:
+  # Define your variables here
+  environment: 'dev'
+  targetResourceGroup: 'rg-qdrant-snapshot-pv' #'rg-dev'  # Target resource group variable
+  azureRMServiceConnection: 'Azure Resource Manager Terraform'  # service connection for Azure
+
+stages:
+  - stage: Snapshot_Qdrant_Dev
+    displayName: "Stage for dev"
+    jobs:
+      - job: LoginToAzure
+        displayName: 'Qdrant Snapshot Job'
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Qdrant Snapshot Task'
+            inputs:
+              azureSubscription: $(azureRMServiceConnection)
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                echo "Already logged into Azure with service connection."
+                az aks install-cli || true
+                chmod +x ./scripts/qdrant_volume_snapshot_vpn.sh
+                ./scripts/qdrant_volume_snapshot_vpn.sh $(environment) $(targetResourceGroup)
+
+      # - job: Snapshot_Qdrant
+      #   displayName: "Run qdrant_volume_snapshot.sh for dev"
+      #   dependsOn: LoginToAzure
+      #   timeoutInMinutes: 15
+      #   steps:
+      #     - task: Bash@3
+      #       displayName: "Run qdrant_volume_snapshot.sh for dev"
+      #       inputs:
+      #         targetType: 'inline'
+      #         script: |
+      #           chmod +x ./scripts/qdrant_volume_snapshot.sh
+      #           ./scripts/qdrant_volume_snapshot.sh $(environment) $(targetResourceGroup)

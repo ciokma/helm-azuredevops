@@ -18,9 +18,9 @@ variable "node_count" {
   default = 1
 }
 variable "node_pool_name" {
-    type = string
-    description = "the user node pool name(for k8s workloas other than system)"  
-    default = "aksnodepool"
+  type        = string
+  description = "the user node pool name(for k8s workloas other than system)"
+  default     = "aksnodepool"
 }
 
 # vars
@@ -52,10 +52,10 @@ variable "dev_namespaces" {
 variable "readonly_namespaces" {
   type        = list(string)
   description = "Namespaces where readonly users will have read-only access"
-  default     = ["ns1", "ns2", "ns3", "ns4", "ns5", "ns6", "ns7", "ns8", "ns9", "ns10", "ns11", "ns12",]
+  default     = ["ns1", "ns2", "ns3", "ns4", "ns5", "ns6", "ns7", "ns8", "ns9", "ns10", "ns11", "ns12", ]
 }
-variable "subscription_id" { 
-  type = string 
+variable "subscription_id" {
+  type = string
 }
 variable "tenant_id" {
   type = string
@@ -68,7 +68,7 @@ variable "admin_group_object_id" {
 }
 
 variable "azure_rbac_enabled" {
-  description = "azure rbac enable or not" 
+  description = "azure rbac enable or not"
 }
 variable "kubernetes_version" {
   description = "kubernetes version"
