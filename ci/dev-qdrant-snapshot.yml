@@ -10,7 +10,7 @@ schedules:
     always: true
 
 pool:
-  name: "ubuntu-latest" # pool name
+  name: "Azure Pipelines" # pool name
 
 variables:
   # Define your variables here
