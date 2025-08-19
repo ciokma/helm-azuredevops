@@ -93,3 +93,11 @@ az aks command invoke \
    echo "$result" | jq \
     --arg search "$search_claim" \
     '.items[] | select(.spec.claimRef.name | contains($search)) | select(.spec.claimRef.namespace=="default")'
+
+    ## applicationID
+    #maurez89-devops-tests-7cfed03d-d6a6-4284-89b7-ff191d896c79
+# 74ce25d5-8dd4-498d-85a5-1af8c4cbd70e
+# 8/18/2025
+
+#suscription
+#f9703f5b-83a3-4d1e-9872-e4b59e50de6e
