@@ -55,7 +55,7 @@ function get_volume_or_disk() {
 
 function delete_kube_contexts() {
     CLUSTERS=(
-        "aks-"
+        "aks-dev"
     )
 
     for CONTEXT in ${CLUSTERS[@]}; do
@@ -129,8 +129,10 @@ function create_snapshot() {
     START_TIME_READABLE=$(date -d @$START_TIME '+%Y-%m-%d %H:%M:%S')
 
     # Display the start time
-    echo "Start time: $START_TIME_READABLE"
-
+    echo "Start time: $START_TIME_READABLE" "$disk_uri"
+    echo "$snapshot_name"
+    echo "$disk_uri"
+    echo "$target_resource_group"
     # Create a snapshot from an existing disk in another resource group
     az snapshot create \
         --resource-group "$target_resource_group" \
