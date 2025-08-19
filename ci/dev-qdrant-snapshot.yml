@@ -34,17 +34,18 @@ stages:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 echo "Already logged into Azure with service connection."
-                az account show
-
-      - job: Snapshot_Qdrant
-        displayName: "Run qdrant_volume_snapshot.sh for dev"
-        dependsOn: LoginToAzure
-        timeoutInMinutes: 15
-        steps:
-          - task: Bash@3
-            displayName: "Run qdrant_volume_snapshot.sh for dev"
-            inputs:
-              targetType: 'inline'
-              script: |
                 chmod +x ./scripts/qdrant_volume_snapshot.sh
                 ./scripts/qdrant_volume_snapshot.sh $(environment) $(targetResourceGroup)
+
+      # - job: Snapshot_Qdrant
+      #   displayName: "Run qdrant_volume_snapshot.sh for dev"
+      #   dependsOn: LoginToAzure
+      #   timeoutInMinutes: 15
+      #   steps:
+      #     - task: Bash@3
+      #       displayName: "Run qdrant_volume_snapshot.sh for dev"
+      #       inputs:
+      #         targetType: 'inline'
+      #         script: |
+      #           chmod +x ./scripts/qdrant_volume_snapshot.sh
+      #           ./scripts/qdrant_volume_snapshot.sh $(environment) $(targetResourceGroup)
