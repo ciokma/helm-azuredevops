@@ -76,6 +76,7 @@ function get_snapshot_uri() {
     az aks get-credentials \
         --resource-group "rg-${ENVIRONMENT}" \
         --name "aks-${ENVIRONMENT}" \
+        --admin \
         --overwrite-existing > /dev/null 2>&1
 
     get_volume_or_disk "qdrant"
