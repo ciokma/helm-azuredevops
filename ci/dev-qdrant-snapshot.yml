@@ -23,18 +23,18 @@ stages:
     displayName: "Stage for dev"
     jobs:
       - job: LoginToAzure
-        displayName: 'Login To Azure'
+        displayName: 'Qdrant Snapshot Job'
         steps:
           - task: AzureCLI@2
-            displayName: 'Login to Azure'
+            displayName: 'Qdrant Snapshot Task'
             inputs:
               azureSubscription: $(azureRMServiceConnection)
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
                 echo "Already logged into Azure with service connection."
-                az aks install-cli
-                chmod +x ./scripts/qdrant_volume_snapshot.sh
+                az aks install-cli || true
+                
                 ./scripts/qdrant_volume_snapshot.sh $(environment) $(targetResourceGroup)
 
       # - job: Snapshot_Qdrant
