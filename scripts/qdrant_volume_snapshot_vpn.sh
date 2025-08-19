@@ -50,24 +50,26 @@ function get_by_claimref_remote() {
     #     --name "$cluster_name" \
     #     --command "kubectl get pv -n default -o json" \
     #     --query "logs" -o tsv)
+    echo  "aks command"
     az aks command invoke \
     --resource-group "rg-dev" \
     --name "aks-dev" \
     --command "kubectl get pv -n default -o json" \
     -o json | jq -r '.logs'
-    result=$(az aks command invoke \
-    --resource-group "$resource_group" \
-    --name "$cluster_name" \
-    --command "kubectl get pv -n default -o json" \
-    -o json | jq -r '.logs')
+
+    # result=$(az aks command invoke \
+    # --resource-group "$resource_group" \
+    # --name "$cluster_name" \
+    # --command "kubectl get pv -n default -o json" \
+    # -o json | jq -r '.logs')
 
     #to avoid stout message
     # --query "logs" -o tsv
     # command started at 2025-08-19 21:03:46+00:00, finished at 2025-08-19 21:03:47+00:00 with exitcode=0
     
-    echo "$result" | jq \
-        --arg search "$search_claim" \
-        '.items[] | select(.spec.claimRef.name | contains($search)) | select(.spec.claimRef.namespace=="default")'
+    # echo "$result" | jq \
+    #     --arg search "$search_claim" \
+    #     '.items[] | select(.spec.claimRef.name | contains($search)) | select(.spec.claimRef.namespace=="default")'
 }
 
 # Function to get the volume or disk URI
@@ -190,13 +192,13 @@ function main() {
     echo "new version"
     ENVIRONMENT="$1"
     TARGET_RESOURCE_GROUP="$2"
-    validate_parameter "$ENVIRONMENT" "$TARGET_RESOURCE_GROUP"
+    # validate_parameter "$ENVIRONMENT" "$TARGET_RESOURCE_GROUP"
     DISK_URI=$(get_snapshot_uri "$ENVIRONMENT")
     if [ -z "$DISK_URI" ]; then
         echo "Error: No disk URI found. Exiting."
         exit 1
     fi
-    create_snapshot "$DISK_URI" "$ENVIRONMENT" "$TARGET_RESOURCE_GROUP"
+    # create_snapshot "$DISK_URI" "$ENVIRONMENT" "$TARGET_RESOURCE_GROUP"
 }
 
 # execution example: ./qdrant_volume_snapshot.sh environment target-resource-group
