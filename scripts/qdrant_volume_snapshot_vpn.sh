@@ -50,6 +50,11 @@ function get_by_claimref_remote() {
     #     --name "$cluster_name" \
     #     --command "kubectl get pv -n default -o json" \
     #     --query "logs" -o tsv)
+    az aks command invoke \
+    --resource-group "rg-dev" \
+    --name "aks-dev" \
+    --command "kubectl get pv -n default -o json" \
+    -o json | jq -r '.logs'
     result=$(az aks command invoke \
     --resource-group "$resource_group" \
     --name "$cluster_name" \
