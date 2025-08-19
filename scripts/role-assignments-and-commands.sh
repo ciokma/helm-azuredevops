@@ -28,11 +28,7 @@ az role assignment create \
 
  az group exists --name rg-qdrant-snapshot-pv | grep -q true
 
- az aks command invoke \
-  --resource-group "rg-dev" \
-  --name "aks-dev" \
-  --command "kubectl apply -f -" \
-  --file "sts.yaml"
+
 
   # crear recurso en private cluster
   az aks command invoke \
@@ -101,3 +97,25 @@ az aks command invoke \
 
 #suscription
 #f9703f5b-83a3-4d1e-9872-e4b59e50de6e
+
+    # dar permiso al cluster a la service connection de azdo
+    az role assignment create \
+  --assignee 74ce25d5-8dd4-498d-85a5-1af8c4cbd70e \
+  --role "Azure Kubernetes Service RBAC Cluster Admin" \
+  --scope /subscriptions/f9703f5b-83a3-4d1e-9872-e4b59e50de6e/resourceGroups/rg-dev/providers/Microsoft.ContainerService/managedClusters/aks-dev
+
+
+az ad sp show --id 74ce25d5-8dd4-498d-85a5-1af8c4cbd70e --query objectId -o tsv
+
+ az aks command invoke \
+  --resource-group "rg-dev" \
+  --name "aks-dev" \
+  --command "kubectl apply -f -" \
+  --file "crb-spn.yaml"
+
+    # crear recurso en private cluster
+  az aks command invoke \
+  --resource-group "rg-dev" \
+  --name "aks-dev" \
+  --command "kubectl apply -f crb-spn.yaml" \
+  --file "crb-spn.yaml"

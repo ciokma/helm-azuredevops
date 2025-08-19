@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: spn-cluster-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: User
+  name: b182a449-98fb-4453-a85d-e093fa3f2250  # tu SPN ObjectId
+  apiGroup: rbac.authorization.k8s.io
+
