@@ -88,7 +88,7 @@ az aks command invoke \
     --resource-group "rg-dev" \
     --name "aks-dev" \
     --command "kubectl get pv -n default -o json" \
-    --query "logs" -o tsv
+    --query "logs" -o tsv)
 
    echo "$result" | jq \
     --arg search "$search_claim" \

@@ -177,6 +177,7 @@ function create_snapshot() {
 }
 
 function main() {
+    echo "new version"
     ENVIRONMENT="$1"
     TARGET_RESOURCE_GROUP="$2"
     validate_parameter "$ENVIRONMENT" "$TARGET_RESOURCE_GROUP"
