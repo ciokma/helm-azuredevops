@@ -38,7 +38,6 @@ stages:
 
       - job: Snapshot_Qdrant
         displayName: "Run qdrant_volume_snapshot.sh for dev"
-        dependsOn: GetAKSCredentials
         timeoutInMinutes: 15
         steps:
           - task: Bash@3
