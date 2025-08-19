@@ -45,7 +45,6 @@ function get_by_claimref_remote() {
     #     '.items[] | select(.spec.claimRef.name | contains($search)) | select(.spec.claimRef.namespace=="default")'
     # Paso 1: Obtener la información de los Persistent Volumes (PVs) del clúster y guardarla en una variable.
 
-    
     result=$(az aks command invoke \
         --resource-group "$resource_group" \
         --name "$cluster_name" \
@@ -54,7 +53,7 @@ function get_by_claimref_remote() {
     #to avoid stout message
     # --query "logs" -o tsv
     # command started at 2025-08-19 21:03:46+00:00, finished at 2025-08-19 21:03:47+00:00 with exitcode=0
-    echo "result $result"
+    
     echo "$result" | jq \
         --arg search "$search_claim" \
         '.items[] | select(.spec.claimRef.name | contains($search)) | select(.spec.claimRef.namespace=="default")'
