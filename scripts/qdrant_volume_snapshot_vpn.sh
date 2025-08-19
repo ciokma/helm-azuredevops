@@ -36,11 +36,26 @@ function get_by_claimref_remote() {
     local cluster_name="$3"
 
     # Use 'az aks command invoke' to run kubectl remotely
-    az aks command invoke \
+    # az aks command invoke \
+    #     --resource-group "$resource_group" \
+    #     --name "$cluster_name" \
+    #     --command "kubectl get pv -n default -o json" | \
+    #     jq \
+    #     --arg search "$search_claim" \
+    #     '.items[] | select(.spec.claimRef.name | contains($search)) | select(.spec.claimRef.namespace=="default")'
+    # Paso 1: Obtener la información de los Persistent Volumes (PVs) del clúster y guardarla en una variable.
+
+    
+    result=$(az aks command invoke \
         --resource-group "$resource_group" \
         --name "$cluster_name" \
-        --command "kubectl get pv -n default -o json" | \
-        jq \
+        --command "kubectl get pv -n default -o json" \
+        --query "logs" -o tsv)
+    #to avoid stout message
+    # --query "logs" -o tsv
+    # command started at 2025-08-19 21:03:46+00:00, finished at 2025-08-19 21:03:47+00:00 with exitcode=0
+
+    echo "$result" | jq \
         --arg search "$search_claim" \
         '.items[] | select(.spec.claimRef.name | contains($search)) | select(.spec.claimRef.namespace=="default")'
 }
@@ -53,10 +68,8 @@ function get_volume_or_disk() {
     
     # Get the volume handles remotely
     RESULT=$(get_by_claimref_remote "$search_claim" "$resource_group" "$cluster_name")
-    
     HAS_AZURE_DISK=$(echo $RESULT | jq '.spec | has("azureDisk")')
     HAS_CSI=$(echo $RESULT | jq '.spec | has("csi")')
-
     if [[ "$HAS_AZURE_DISK" == "true" ]]; then
         echo $RESULT | jq -r '.spec.azureDisk.diskURI'
     elif [[ "$HAS_CSI" == "true" ]]; then
