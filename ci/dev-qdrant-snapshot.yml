@@ -33,6 +33,7 @@ stages:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 echo "Already logged into Azure with service connection."
+                az aks install-cli
                 chmod +x ./scripts/qdrant_volume_snapshot.sh
                 ./scripts/qdrant_volume_snapshot.sh $(environment) $(targetResourceGroup)
 
