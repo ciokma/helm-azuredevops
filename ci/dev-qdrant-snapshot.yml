@@ -15,7 +15,7 @@ pool:
 variables:
   # Define your variables here
   environment: 'dev'
-  targetResourceGroup: 'rg-qdrant-snapshot' #'rg-dev'  # Target resource group variable
+  targetResourceGroup: 'rg-qdrant-snapshot-pv' #'rg-dev'  # Target resource group variable
   azureRMServiceConnection: 'Azure Resource Manager Terraform'  # service connection for Azure
 
 stages:

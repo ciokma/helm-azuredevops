@@ -9,3 +9,7 @@ az role assignment create \
   --role Contributor \
   --scope /subscriptions/f9703f5b-83a3-4d1e-9872-e4b59e50de6e
 
+
+az group create \
+  --name rg-qdrant-snapshot-pv \
+  --location eastus
