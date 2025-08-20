@@ -35,33 +35,11 @@ function get_by_claimref_remote() {
     local resource_group="$2"
     local cluster_name="$3"
 
-    # Use 'az aks command invoke' to run kubectl remotely
-    # az aks command invoke \
-    #     --resource-group "$resource_group" \
-    #     --name "$cluster_name" \
-    #     --command "kubectl get pv -n default -o json" | \
-    #     jq \
-    #     --arg search "$search_claim" \
-    #     '.items[] | select(.spec.claimRef.name | contains($search)) | select(.spec.claimRef.namespace=="default")'
-    # Paso 1: Obtener la información de los Persistent Volumes (PVs) del clúster y guardarla en una variable.
-
-    # result=$(az aks command invoke \
-    #     --resource-group "$resource_group" \
-    #     --name "$cluster_name" \
-    #     --command "kubectl get pv -n default -o json" \
-    #     --query "logs" -o tsv)
-
-
     result=$(az aks command invoke \
         --resource-group "$resource_group" \
         --name "$cluster_name" \
         --command "kubectl get pv -n default -o json" \
         -o json | jq -r '.logs')
-
-    #to avoid stout message
-    # --query "logs" -o tsv
-    # command started at 2025-08-19 21:03:46+00:00, finished at 2025-08-19 21:03:47+00:00 with exitcode=0
-    
     echo "$result" | jq \
         --arg search "$search_claim" \
         '.items[] | select(.spec.claimRef.name | contains($search)) | select(.spec.claimRef.namespace=="default")'
@@ -87,11 +65,6 @@ function get_volume_or_disk() {
     fi
 }
 
-# No longer needed as we use `az aks command invoke`
-# function delete_kube_contexts() {
-#     ...
-# }
-
 function get_snapshot_uri() {
     local ENVIRONMENT=${1,,}
     local CLUSTER_NAME="aks-$ENVIRONMENT"
@@ -104,11 +77,6 @@ function get_snapshot_uri() {
     fi
 
     az account set --subscription "$SUBSCRIPTION_ID"
-    
-    # We no longer need to get the credentials locally
-    # delete_kube_contexts
-    # az aks get-credentials --resource-group "$RESOURCE_GROUP" --name "$CLUSTER_NAME" --admin --overwrite-existing > /dev/null 2>&1
-
     get_volume_or_disk "qdrant" "$RESOURCE_GROUP" "$CLUSTER_NAME"
 }
 
@@ -160,9 +128,6 @@ function create_snapshot() {
 
     # Display the start time
     echo "Start time: $START_TIME_READABLE"
-    echo "snapshot_name $snapshot_name"
-    echo "disk_uri $disk_uri"
-    echo "target_resource_group $target_resource_group"
     # Create a snapshot from an existing disk in another resource group
     az snapshot create \
         --resource-group "$target_resource_group" \
@@ -184,7 +149,6 @@ function create_snapshot() {
 }
 
 function main() {
-    echo "new version"
     ENVIRONMENT="$1"
     TARGET_RESOURCE_GROUP="$2"
     validate_parameter "$ENVIRONMENT" "$TARGET_RESOURCE_GROUP"
@@ -196,5 +160,4 @@ function main() {
    create_snapshot "$DISK_URI" "$ENVIRONMENT" "$TARGET_RESOURCE_GROUP"
 }
 
-# execution example: ./qdrant_volume_snapshot.sh environment target-resource-group
 main "$@"
