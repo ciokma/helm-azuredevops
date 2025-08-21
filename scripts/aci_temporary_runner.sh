@@ -37,7 +37,7 @@ create_subnet() {
       --resource-group "$RESOURCE_GROUP" \
       --vnet-name "$VNET_NAME" \
       --name "$SUBNET_NAME" \
-      --address-prefixes "10.10.2.0/24"
+      --address-prefixes "10.10.3.0/28"
   fi
 }
 
