@@ -119,3 +119,81 @@ az ad sp show --id 74ce25d5-8dd4-498d-85a5-1af8c4cbd70e --query objectId -o tsv
   --name "aks-dev" \
   --command "kubectl apply -f crb-spn.yaml" \
   --file "crb-spn.yaml"
+
+
+#bueno para copiar
+base64 qdrant_volume_snapshot.sh > qdrant_volume_snapshot.sh.b64
+
+  az container exec \
+  --resource-group rg-qdrant-snapshot-pv \
+  --name aci \
+  --exec-command "bash -c 'echo \"$(cat qdrant_volume_snapshot.sh > /tmp/qdrant_volume_snapshot.sh) && chmod +x /tmp/qdrant_volume_snapshot.sh'"
+
+
+  
+  az container exec \
+  --resource-group rg-qdrant-snapshot-pv \
+  --name aci \
+  --exec-command "bash -c 'echo \"$(echo "hola"  > /tmp/qdrant_volume_snapshot.sh) && chmod +x /tmp/qdrant_volume_snapshot.sh'"
+
+
+
+az container exec --resource-group rg-qdrant-snapshot-pv --name aci --exec-command "bash -c 'echo \"$(head -n 50 qdrant_volume_snapshot.sh)\" > /tmp/parte1.sh'"
+
+"bash -c 'echo \"$(cp qdrant_volume_snapshot.sh  /tmp/qdrant_volume_snapshot.sh) && chmod +x /tmp/qdrant_volume_snapshot.sh'"
+"bash -c 'echo \"$(head -n 50 qdrant_volume_snapshot.sh)\" > /tmp/parte1.sh'"
+
+ az container exec \
+  --resource-group rg-qdrant-snapshot-pv \
+  --name aci \
+  --exec-command "bash -c 'echo \"$(head -n 50 qdrant_volume_snapshot.sh)\" > /tmp/parte1.sh'"
+
+
+  ### workflow ###
+  # Crear Storage Account
+
+  1️⃣ Crear un Azure Storage Account y un File Share
+# Crear Storage Account
+az storage account create \
+  --name mystorageacct123 \
+  --resource-group rg-qdrant-snapshot-pv \
+  --location eastus \
+  --sku Standard_LRS
+
+# Obtener la key
+STORAGE_KEY=$(az storage account keys list \
+  --account-name mystorageacct123 \
+  --resource-group rg-qdrant-snapshot-pv \
+  --query "[0].value" -o tsv)
+
+# Crear File Share
+az storage share create \
+  --name scripts-share \
+  --account-name mystorageacct123 \
+  --account-key $STORAGE_KEY
+2️⃣ Subir tu script al File Share
+2️⃣ Subir tu script al File Share
+
+az storage file upload \
+  --share-name scripts-share \
+  --source qdrant_volume_snapshot.sh \
+  --path qdrant_volume_snapshot.sh \
+  --account-name mystorageacct123 \
+  --account-key $STORAGE_KEY
+
+3️⃣ Crear el ACI y montar el File Share
+az container create \
+  --resource-group rg-qdrant-snapshot-pv \
+  --name aci \
+  --image mcr.microsoft.com/azure-cli \
+  --azure-file-volume-share-name scripts-share \
+  --azure-file-volume-account-name mystorageacct123 \
+  --azure-file-volume-account-key $STORAGE_KEY \
+  --azure-file-volume-mount-path /mnt/scripts \
+  --command-line "/bin/bash -c 'tail -f /dev/null'"
+
+4️⃣ Ejecutar tu script desde ACI
+az container exec \
+  --resource-group rg-qdrant-snapshot-pv \
+  --name aci \
+  --exec-command "bash /mnt/scripts/qdrant_volume_snapshot.sh dev rg-qdrant-snapshot-pv"

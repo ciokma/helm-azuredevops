@@ -1,5 +1,8 @@
 variable "resource_group_name" {
-  default = "aks-us-test-rg"
+  default = "rg-dev"
+}
+variable "tg_resource_group_name" {
+  default = "rg-qdrant-snapshot-pv"
 }
 
 variable "location" {

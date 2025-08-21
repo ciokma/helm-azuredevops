@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 declare -A SUBSCRIPTION
 
 SUBSCRIPTION["dev"]="f9703f5b-83a3-4d1e-9872-e4b59e50de6e"
@@ -8,56 +7,59 @@ SUBSCRIPTION["stg"]=""
 SUBSCRIPTION["uat"]=""
 SUBSCRIPTION["prod"]=""
 
-# Function to get volume information using 'az aks command invoke'
-function get_by_claimref_remote() {
-    local search_claim="$1"
-    local resource_group="$2"
-    local cluster_name="$3"
-
-    result=$(az aks command invoke \
-        --resource-group "$resource_group" \
-        --name "$cluster_name" \
-        --command "kubectl get pv -n default -o json" \
-        -o json | jq -r '.logs')
-    echo "$result" | jq \
-        --arg search "$search_claim" \
-        '.items[] | select(.spec.claimRef.name | contains($search)) | select(.spec.claimRef.namespace=="default")'
+function get_by_claimref() {
+    SEARCH="$1"
+    VOLUME_HANDLES_ARRAY=$(kubectl get pv \
+        -n default \
+        -o json | \
+        jq \
+        --arg search "$SEARCH" \
+        '.items[]|select(.spec.claimRef.name | contains($search))|select(.spec.claimRef.namespace=="default")')
+    echo "${VOLUME_HANDLES_ARRAY}"
 }
 
-# Function to get the volume or disk URI
 function get_volume_or_disk() {
-    local search_claim="$1"
-    local resource_group="$2"
-    local cluster_name="$3"
-    
-    # Get the volume handles remotely
-    RESULT=$(get_by_claimref_remote "$search_claim" "$resource_group" "$cluster_name")
+    SEARCH="$1"
+    RESULT=$(get_by_claimref "$SEARCH")
     HAS_AZURE_DISK=$(echo $RESULT | jq '.spec | has("azureDisk")')
     HAS_CSI=$(echo $RESULT | jq '.spec | has("csi")')
+
     if [[ "$HAS_AZURE_DISK" == "true" ]]; then
         echo $RESULT | jq -r '.spec.azureDisk.diskURI'
     elif [[ "$HAS_CSI" == "true" ]]; then
         echo $RESULT | jq -r '.spec.csi.volumeHandle'
-    else
-        echo "Error: Could not find disk URI for claim reference '$search_claim'"
-        exit 1
     fi
 }
 
-function get_snapshot_uri() {
-    local ENVIRONMENT=${1,,}
-    local CLUSTER_NAME="aks-$ENVIRONMENT"
-    local RESOURCE_GROUP="rg-$ENVIRONMENT"
-    local SUBSCRIPTION_ID="${SUBSCRIPTION["$ENVIRONMENT"]}"
+function delete_kube_contexts() {
+    CLUSTERS=(
+        "aks-dev"
+    )
 
+    for CONTEXT in ${CLUSTERS[@]}; do
+        kubectl config delete-context $CONTEXT > /dev/null 2>&1
+    done
+}
+
+function get_snapshot_uri() {
+    ENVIRONMENT=${1,,}
+    SUBSCRIPTION_ID="${SUBSCRIPTION["$ENVIRONMENT"]}"
     if [ -z "$SUBSCRIPTION_ID" ]; then
         echo "Error: Subscription ID is empty for environment '$ENVIRONMENT'."
         exit 1
     fi
 
     az account set --subscription "$SUBSCRIPTION_ID"
-    get_volume_or_disk "qdrant" "$RESOURCE_GROUP" "$CLUSTER_NAME"
+    delete_kube_contexts
+    az aks get-credentials \
+        --resource-group "rg-${ENVIRONMENT}" \
+        --name "aks-${ENVIRONMENT}" \
+        --admin \
+        --overwrite-existing > /dev/null 2>&1
+
+    get_volume_or_disk "qdrant"
 }
+
 
 function validate_parameter() {
     ENVIRONMENT=$1
@@ -107,6 +109,9 @@ function create_snapshot() {
 
     # Display the start time
     echo "Start time: $START_TIME_READABLE"
+    echo "snapshot_name $snapshot_name"
+    echo "disk_uri $disk_uri"
+    echo "target_resource_group $target_resource_group"
     # Create a snapshot from an existing disk in another resource group
     az snapshot create \
         --resource-group "$target_resource_group" \
@@ -132,11 +137,8 @@ function main() {
     TARGET_RESOURCE_GROUP="$2"
     validate_parameter "$ENVIRONMENT" "$TARGET_RESOURCE_GROUP"
     DISK_URI=$(get_snapshot_uri "$ENVIRONMENT")
-    if [ -z "$DISK_URI" ]; then
-        echo "Error: No disk URI found. Exiting."
-        exit 1
-    fi
-   create_snapshot "$DISK_URI" "$ENVIRONMENT" "$TARGET_RESOURCE_GROUP"
+    create_snapshot "$DISK_URI" "$ENVIRONMENT" "$TARGET_RESOURCE_GROUP"
 }
 
+# execution example: ./qdrant_volume_snapshot.sh environment target-resource-group
 main "$@"

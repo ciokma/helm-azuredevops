@@ -1,26 +1,5 @@
 #!/usr/bin/env bash
 
-# This script performs backups of Azure volumes and manages resources in Kubernetes.
-
-# Usage:
-# ./qdrant_volume_snapshot.sh <environment> <target_resource_group>
-#
-# Example:
-# ./qdrant_volume_snapshot.sh dev backup-test-resource-group
-
-# Parameters:
-#   <environment>       The environment in which the script runs (dev, stg, uat, prod).
-#   <target_resource_group>    The Azure resource group where the backup will be created.
-
-# Dependencies:
-# - Azure CLI
-# - kubectl
-# - jq
-
-# Example Output:
-# Start time: 2025-10-01 12:00:00
-# Snapshot created in dev: my-disk-snapshot-202310011200
-# Total execution time in dev: 30 seconds
 
 declare -A SUBSCRIPTION
 
@@ -71,7 +50,7 @@ function get_snapshot_uri() {
         exit 1
     fi
 
-    az account set --subscription "$SUBSCRIPTION_ID"
+
     delete_kube_contexts
     az aks get-credentials \
         --resource-group "rg-${ENVIRONMENT}" \
@@ -121,7 +100,7 @@ function create_snapshot() {
     # The resource group in which the azure disk will be created.
     local target_resource_group="$3"
     # Get disk name
-    local disk_name=$(echo "$disk_uri" | awk -F'/' '{print $NF}')
+    local disk_name=$(basename "$disk_uri")
     # Unique snapshot name with timestamp
     local snapshot_name="${disk_name}-snapshot-$(date -u +"%Y%m%d%H%M")"
 
@@ -153,10 +132,15 @@ function create_snapshot() {
         echo -e "\nError creating snapshot of ${disk_id} in ${resource_group}"
     fi
 }
-
+function login_to_azure(){
+    #az account set --subscription "$SUBSCRIPTION_ID"
+    az login --identity
+    az account set --subscription "${SUBSCRIPTION["$ENVIRONMENT"]}"
+}
 function main() {
     ENVIRONMENT="$1"
     TARGET_RESOURCE_GROUP="$2"
+    login_to_azure $ENVIRONMENT
     validate_parameter "$ENVIRONMENT" "$TARGET_RESOURCE_GROUP"
     DISK_URI=$(get_snapshot_uri "$ENVIRONMENT")
     create_snapshot "$DISK_URI" "$ENVIRONMENT" "$TARGET_RESOURCE_GROUP"
@@ -164,3 +148,4 @@ function main() {
 
 # execution example: ./qdrant_volume_snapshot.sh environment target-resource-group
 main "$@"
+exit 1
