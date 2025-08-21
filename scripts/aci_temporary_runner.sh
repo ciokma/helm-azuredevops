@@ -109,7 +109,7 @@ wait_for_role() {
       return 0
     fi
     attempt=$(( attempt + 1 ))
-    sleep 30
+    sleep 15
   done
 
   >&2 echo "[ERROR] Role assignment did not propagate in time."
@@ -129,7 +129,7 @@ main() {
   aci_principal_id="$(get_aci_principal_id)"
   assign_role "$aci_principal_id"
   echo "[INFO] Waiting for role assignment to propagate..."
-  sleep 120
+  sleep 60
   #wait_for_role "$aci_principal_id"
   install_kubectl_in_aci
   run_snapshot_script
