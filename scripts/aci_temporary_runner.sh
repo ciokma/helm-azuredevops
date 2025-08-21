@@ -129,8 +129,8 @@ main() {
   aci_principal_id="$(get_aci_principal_id)"
   assign_role "$aci_principal_id"
   echo "[INFO] Waiting for role assignment to propagate..."
-  sleep 60
-  #wait_for_role "$aci_principal_id"
+  #sleep 60
+  wait_for_role "$aci_principal_id"
   install_kubectl_in_aci
   run_snapshot_script
 }
