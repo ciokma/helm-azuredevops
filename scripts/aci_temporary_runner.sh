@@ -26,12 +26,19 @@ fi
 #######################################
 
 create_subnet() {
-  echo "[INFO] Creating subnet: $SUBNET_NAME in VNet: $VNET_NAME..."
-  az network vnet subnet create \
-    --resource-group "$RESOURCE_GROUP" \
-    --vnet-name "$VNET_NAME" \
-    --name "$SUBNET_NAME" \
-    --address-prefixes "10.10.2.0/24"
+  echo "[INFO] Ensuring subnet: $SUBNET_NAME exists in VNet: $VNET_NAME..."
+  if az network vnet subnet show \
+       --resource-group "$RESOURCE_GROUP" \
+       --vnet-name "$VNET_NAME" \
+       --name "$SUBNET_NAME" &>/dev/null; then
+    echo "[INFO] Subnet $SUBNET_NAME already exists. Skipping creation."
+  else
+    az network vnet subnet create \
+      --resource-group "$RESOURCE_GROUP" \
+      --vnet-name "$VNET_NAME" \
+      --name "$SUBNET_NAME" \
+      --address-prefixes "10.10.2.0/24"
+  fi
 }
 
 create_aci() {
