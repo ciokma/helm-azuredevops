@@ -33,5 +33,5 @@ stages:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 echo "Already logged into Azure with service connection."
-                chmod +x ./scripts/qdrant_volume_snapshot_vpn.sh
+                chmod +x ./scripts/aci_temporary_runner.sh
                 ./scripts/aci_temporary_runner.sh $(environment) $(targetResourceGroup)
