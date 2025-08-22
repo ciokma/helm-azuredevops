@@ -1,0 +1,10 @@
+{
+  "version": "2.0",
+  "functionTimeout": "00:10:00",
+  "customHandler": {
+    "description": {
+      "defaultExecutablePath": "QdrantSnapshot/qdrant_volume_snapshot.sh"
+    },
+    "enableForwardingHttpRequest": true
+  }
+}

@@ -113,7 +113,19 @@ az aks command invoke \
   --scope /subscriptions/f9703f5b-83a3-4d1e-9872-e4b59e50de6e
 
 
+        az role assignment create --role "Reader" --scope "/subscriptions/f9703f5b-83a3-4d1e-9872-e4b59e50de6e" --assignee-object-id "b182a449-98fb-4453-a85d-e093fa3f2250" --assignee-principal-type "ServicePrincipal"
 
+# IMPORTANTE DAR ESTE PERMISO
+az role assignment create \
+  --assignee b182a449-98fb-4453-a85d-e093fa3f2250 \
+  --role "User Access Administrator" \
+  --scope "/subscriptions/f9703f5b-83a3-4d1e-9872-e4b59e50de6e"
+
+# Y ESTE POR SI ACASO
+        az role assignment create \
+  --assignee 74ce25d5-8dd4-498d-85a5-1af8c4cbd70e \
+  --role "Contributor" \
+  --scope "/subscriptions/f9703f5b-83a3-4d1e-9872-e4b59e50de6e"
 
 az ad sp show --id 74ce25d5-8dd4-498d-85a5-1af8c4cbd70e --query objectId -o tsv
 

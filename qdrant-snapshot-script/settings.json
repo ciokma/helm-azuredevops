@@ -1,0 +1,3 @@
+{
+  "azureFunctions.deploySubpath": "qdrant-snapshot-script"
+}
