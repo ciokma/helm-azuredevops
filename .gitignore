@@ -41,7 +41,7 @@ secrets.yaml
 
 # === General ===
 # Editor/IDE
-.vscode/
+
 .idea/
 .DS_Store
 *.swp

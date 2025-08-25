@@ -1,0 +1,152 @@
+
+#!/usr/bin/env bash
+
+
+declare -A SUBSCRIPTION
+
+SUBSCRIPTION["dev"]="f9703f5b-83a3-4d1e-9872-e4b59e50de6e"
+SUBSCRIPTION["stg"]=""
+SUBSCRIPTION["uat"]=""
+SUBSCRIPTION["prod"]=""
+ENVIRONMENT=${ENVIRONMENT,,}
+TARGET_RESOURCE_GROUP=${TARGET_RESOURCE_GROUP}
+
+function get_by_claimref() {
+    SEARCH="$1"
+    VOLUME_HANDLES_ARRAY=$(kubectl get pv \
+        -n default \
+        -o json | \
+        jq \
+        --arg search "$SEARCH" \
+        '.items[]|select(.spec.claimRef.name | contains($search))|select(.spec.claimRef.namespace=="default")')
+    echo "${VOLUME_HANDLES_ARRAY}"
+}
+
+function get_volume_or_disk() {
+    SEARCH="$1"
+    RESULT=$(get_by_claimref "$SEARCH")
+    HAS_AZURE_DISK=$(echo $RESULT | jq '.spec | has("azureDisk")')
+    HAS_CSI=$(echo $RESULT | jq '.spec | has("csi")')
+
+    if [[ "$HAS_AZURE_DISK" == "true" ]]; then
+        echo $RESULT | jq -r '.spec.azureDisk.diskURI'
+    elif [[ "$HAS_CSI" == "true" ]]; then
+        echo $RESULT | jq -r '.spec.csi.volumeHandle'
+    fi
+}
+
+function delete_kube_contexts() {
+    CLUSTERS=(
+        "aks-dev"
+    )
+
+    for CONTEXT in ${CLUSTERS[@]}; do
+        kubectl config delete-context $CONTEXT > /dev/null 2>&1
+    done
+}
+
+function get_snapshot_uri() {
+    ENVIRONMENT=${1,,}
+    SUBSCRIPTION_ID="${SUBSCRIPTION["$ENVIRONMENT"]}"
+    if [ -z "$SUBSCRIPTION_ID" ]; then
+        echo "Error: Subscription ID is empty for environment '$ENVIRONMENT'."
+        exit 1
+    fi
+
+
+    delete_kube_contexts
+    az aks get-credentials \
+        --resource-group "rg-${ENVIRONMENT}" \
+        --name "aks-${ENVIRONMENT}" \
+        --admin \
+        --overwrite-existing > /dev/null 2>&1
+
+    get_volume_or_disk "qdrant"
+}
+
+
+function validate_parameter() {
+    ENVIRONMENT=$1
+    RESOURCE_GROUP=$2
+    # VALIDATE ENVIRONMENT PARAMETER
+    if [ -z "$ENVIRONMENT" ]; then
+        echo "Error: No environment specified. Please provide 'dev', 'stg', 'uat', or 'prod'."
+        exit 1
+    # VALIDATE TARGET RESOURCE GROUP
+    elif [ -z "$RESOURCE_GROUP" ]; then
+        echo "Error: No target resource group specified. Please provide a target resource group in which the snapshot will be created."
+        exit 1
+    fi
+
+    ENVIRONMENT=${1^^}
+
+    # VALIDATE ENVIRONMENT VALUE
+    case ${ENVIRONMENT} in
+        "DEV" | "STG" | "UAT" | "PROD")
+            # Valid environment, do nothing
+            ;;
+        * )
+            echo "Error: Invalid environment specified. Please specify 'dev', 'stg', 'uat', or 'prod'."
+            exit 1
+            ;;
+    esac
+    # VALIDATE IF RESOURCE GROUP EXISTS
+    if ! az group exists --name "$RESOURCE_GROUP" | grep -q true; then
+        echo "Error: The specified resource group '$RESOURCE_GROUP' does not exist."
+        exit 1
+    fi
+}
+
+function create_snapshot() {
+    local disk_uri="$1"
+    local environment="$2"
+    # The resource group in which the azure disk will be created.
+    local target_resource_group="$3"
+    # Get disk name
+    local disk_name=$(basename "$disk_uri")
+    # Unique snapshot name with timestamp
+    local snapshot_name="${disk_name}-snapshot-$(date -u +"%Y%m%d%H%M")"
+
+    # Record the start time
+    START_TIME=$(date +%s)
+    START_TIME_READABLE=$(date -d @$START_TIME '+%Y-%m-%d %H:%M:%S')
+
+    # Display the start time
+    echo "Start time: $START_TIME_READABLE"
+    echo "snapshot_name $snapshot_name"
+    echo "disk_uri $disk_uri"
+    echo "target_resource_group $target_resource_group"
+    # Create a snapshot from an existing disk in another resource group
+    az snapshot create \
+        --resource-group "$target_resource_group" \
+        --name "$snapshot_name" \
+        --source "$disk_uri" \
+        --incremental false \
+        --tags "createdBy=qdrant_volume_snapshot.sh" "env=$environment" "timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+    if [[ $? -eq 0 ]]; then
+        # Record the end time
+        END_TIME=$(date +%s)
+        # Calculate the total duration
+        DURATION=$((END_TIME - START_TIME))
+        # Display the result
+        echo -e "\nSnapshot created in $environment: $snapshot_name"
+        echo "Total execution time in $environment: $DURATION seconds"
+    else
+        echo -e "\nError creating snapshot of ${disk_id} in ${resource_group}"
+    fi
+}
+function login_to_azure(){
+    # az login --identity es la forma correcta para Azure Functions que usan Managed Identity (Identidad Administrada)
+    az login --identity
+    # Asignamos la subscripción basándonos en la variable de entorno ENVIRONMENT
+    az account set --subscription "${SUBSCRIPTION["$ENVIRONMENT"]}"
+}
+function main() {
+    login_to_azure $ENVIRONMENT
+    validate_parameter "$ENVIRONMENT" "$TARGET_RESOURCE_GROUP"
+    DISK_URI=$(get_snapshot_uri "$ENVIRONMENT")
+    create_snapshot "$DISK_URI" "$ENVIRONMENT" "$TARGET_RESOURCE_GROUP"
+}
+
+main
+exit 0

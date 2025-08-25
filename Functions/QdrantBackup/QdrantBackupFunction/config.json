@@ -1,0 +1,4 @@
+{
+    "Environment": "dev",
+    "TargetResourceGroup": "rg-dev"
+}
