@@ -76,3 +76,14 @@ variable "azure_rbac_enabled" {
 variable "kubernetes_version" {
   description = "kubernetes version"
 }
+
+variable "azure_client_secret" {
+  description = "client secret"
+}
+variable "environment" {
+  description = "environment"
+}
+variable "resource_group_name_function" {
+  description = "rg-function"
+
+}
