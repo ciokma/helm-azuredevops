@@ -83,7 +83,7 @@ variable "azure_client_secret" {
 variable "environment" {
   description = "environment"
 }
-variable "resource_group_name_function" {
-  description = "rg-function"
+variable "qdrant_target_rg" {
+  description = "qdrant snapshot target resource group"
 
 }

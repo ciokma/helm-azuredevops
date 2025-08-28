@@ -1,12 +1,13 @@
 
+resource "azurerm_resource_group" "target_rg" {
+  name     = var.qdrant_target_rg
+  location = var.location
+}
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.location
 }
-# resource "azurerm_resource_group" "rg_function" {
-#   name     = var.resource_group_name_function
-#   location = var.location
-# }
+
 # Configura el clúster de Kubernetes (AKS).
 resource "azurerm_kubernetes_cluster" "k8s" {
   name                = var.aks_cluster_name

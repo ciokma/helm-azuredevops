@@ -23,17 +23,12 @@ resource "azurerm_role_assignment" "function_storage_blob_reader" {
   role_definition_name = "Storage Blob Data Reader"
   principal_id         = azurerm_user_assigned_identity.function_identity.principal_id
 }
-
-# luego cambiar
-# Role Assignment para permitir a la función crear snapshots
+# Role Assignment to allow the function to create snapshots
 resource "azurerm_role_assignment" "function_snapshot_contributor" {
-  # El scope debe ser el grupo de recursos donde se crearan los snapshots.
-  # El error indica que es "rg-qdrant-snapshot-pv".
-  scope                = "/subscriptions/f9703f5b-83a3-4d1e-9872-e4b59e50de6e/resourceGroups/rg-qdrant-snapshot-pv"
-  
-  # El rol de Contributor permite la escritura de snapshots.
+  # Referencing the ID of the target resource group
+  scope                = azurerm_resource_group.target_rg.id
+  # The Contributor role allows snapshot creation
   role_definition_name = "Contributor"
-  
-  # La principal es la identidad gestionada de tu función.
+  # The principal is your function's managed identity
   principal_id         = azurerm_user_assigned_identity.function_identity.principal_id
 }
