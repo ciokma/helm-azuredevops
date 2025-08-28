@@ -6,7 +6,7 @@ variable "node_count" { type = number }
 variable "node_pool_name" { type = string }
 
 variable "tenant_id" { type = string }
-variable "admin_group_object_id" { type = list(string) }
+variable "admin_group_object_ids" { type = list(string) }
 variable "azure_rbac_enabled" { type = bool }
 variable "kubernetes_version" { type = string }
 

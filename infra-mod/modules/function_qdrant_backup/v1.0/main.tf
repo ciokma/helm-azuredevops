@@ -92,17 +92,29 @@ resource "azurerm_function_app_flex_consumption" "function" {
   }
 
   app_settings = {
-    AzureWebJobsStorage       = azurerm_storage_account.function_sa.primary_connection_string
-    AZURE_CLIENT_ID           = azurerm_user_assigned_identity.function_identity.client_id
-    AZURE_TENANT_ID           = var.tenant_id
-    AZURE_SUBSCRIPTION_ID     = var.subscription_id
-    CLUSTER_NAME              = var.aks_cluster_name
-    AZURE_RESOURCE_GROUP_NAME = var.resource_group_name
-    TARGET_RESOURCE_GROUP     = var.target_resource_group_name
-    ENVIRONMENT               = var.environment
-
+    AzureWebJobsStorage   = azurerm_storage_account.function_sa.primary_connection_string
+    AZURE_CLIENT_ID       = azurerm_user_assigned_identity.function_identity.client_id
+    AZURE_TENANT_ID       = var.tenant_id
+    AZURE_SUBSCRIPTION_ID = var.subscription_id
+    CLUSTER_NAME          = var.aks_cluster_name
+    RESOURCE_GROUP_NAME   = var.resource_group_name
+    TARGET_RESOURCE_GROUP = var.target_resource_group_name
+    ENVIRONMENT           = var.environment
+    QDRANT_PV_PATTERN     = var.qdrant_pv_pattern
+    QDRANT_NAMESPACE      = var.qdrant_namespace
+    # Audience for getting tokens AAD with the API de AKS API
+    AKS_AUDIENCE                          = var.aks_audience
     APPINSIGHTS_INSTRUMENTATIONKEY        = azurerm_application_insights.app_insights.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.app_insights.connection_string
+  }
+  lifecycle {
+    ignore_changes = [
+      # This will ignore any changes to the app_settings map that are not in the code.
+      # The keys you define above will still be managed.
+      # app_settings,
+      tags,
+      site_config
+    ]
   }
 }
 

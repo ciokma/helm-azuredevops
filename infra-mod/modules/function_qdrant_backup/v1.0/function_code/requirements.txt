@@ -7,4 +7,3 @@ azure-identity             # Azure authentication via Managed Identity, CLI, or 
 azure-mgmt-containerservice # Manage Azure Kubernetes Service (AKS) clusters
 azure-mgmt-compute         # Manage Azure Compute resources, including snapshots
 kubernetes                 # Kubernetes Python client for interacting with cluster resources
-PyYAML                     # Parse and handle YAML files (e.g., kubeconfig)

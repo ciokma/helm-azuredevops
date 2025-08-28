@@ -12,6 +12,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "user_pool" {
     node_soak_duration_in_minutes = 0
     max_surge                     = "40%"
   }
+  vnet_subnet_id = var.aks_subnet_id
 
   temporary_name_for_rotation = "userpooltemp"
 

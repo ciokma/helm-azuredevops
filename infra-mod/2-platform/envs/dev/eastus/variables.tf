@@ -1,29 +1,21 @@
 variable "client_name" {
-  default            = "aks"
+  default     = "aks"
   type        = string
   description = "aks client name"
-}
-variable "cluster_name" {
-  description = "Name of the AKS cluster"
-  type        = string
 }
 
 variable "location" {
   description = "Azure region where the AKS cluster will be deployed"
   type        = string
-  default = "eastus"
+  default     = "eastus"
 }
 
 variable "resource_group_name" {
   description = "Name of the Resource Group where AKS will be deployed"
   type        = string
-  default = "rg-qdrant-snapshot-pv"
+  default     = "rg-qdrant-snapshot-pv"
 }
 
-variable "dns_prefix" {
-  description = "DNS prefix for the AKS cluster"
-  type        = string
-}
 
 variable "kubernetes_version" {
   description = "Kubernetes version to deploy"
@@ -75,7 +67,7 @@ variable "vm_size" {
 variable "tags" {
   description = "Tags to apply to the AKS cluster"
   type        = map(string)
-  default     = {
+  default = {
     Environment = "dev"
   }
 }
@@ -97,10 +89,6 @@ variable "subscription_id" {
   type = string
 }
 
-variable "admin_group_object_id" {
-  description = "Azure AD group object ID to grant cluster-admin access"
-}
-
 variable "azure_rbac_enabled" {
   description = "Enable Azure RBAC"
   type        = bool
@@ -114,9 +102,6 @@ variable "environment" {
 
 # --- AKS Network ---
 
-variable "aks_subnet_id" {
-  description = "ID of the subnet for AKS cluster"
-}
 
 variable "function_subnet_id" {
   description = "ID of the subnet for Azure Function"
@@ -138,14 +123,23 @@ variable "target_resource_group_name" {
   default = "rg-qdrant-snapshot-pv"
 }
 variable "aks_admins_group_id" {
-  
+
 }
 variable "private_cluster_enabled" {
-  
+
 }
 variable "private_cluster_public_fqdn_enabled" {
-  
+
 }
-variable "aks_cluster_name" {
-  
+variable "create_in_vnet" {
+
+}
+variable "qdrant_pv_pattern" {
+
+}
+variable "qdrant_namespace" {
+
+}
+variable "aks_audience" {
+
 }
