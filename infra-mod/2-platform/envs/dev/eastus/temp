@@ -1,0 +1,44 @@
+# --- Identidad Azure ---
+subscription_id = "f9703f5b-83a3-4d1e-9872-e4b59e50de6e"
+tenant_id       = "ab837a12-fd70-445a-92f7-780f815e115e"
+
+# --- AKS config ---
+resource_group_name        = "rg-dev"
+target_resource_group_name = "rg-qdrant-snapshot-pv"
+location                   = "eastus"
+node_size                  = "Standard_B2s"
+node_count                 = 1
+node_pool_name             = "usapps"
+
+# AKS Networking
+service_cidr   = "10.200.0.0/16"
+dns_service_ip = "10.200.0.10"
+
+# AKS Access
+azure_rbac_enabled     = false
+admin_group_object_ids = ["de8d606b-8869-4433-8be0-8bf4703ec810"]
+kubernetes_version     = "1.32.5"
+
+# Optional extra groups (not yet wired into RBAC module, but preserved)
+aks_admins_group_id = "de8d606b-8869-4433-8be0-8bf4703ec810"
+# --- Environment ---
+environment = "dev"
+
+# --- Flags ---
+# PRIVATE
+# private_cluster_enabled             = true
+# private_cluster_public_fqdn_enabled = false
+#PUBLIC
+private_cluster_enabled             = false
+private_cluster_public_fqdn_enabled = true
+
+deploy_function_in_vnet             = true
+#aks_cluster_name = "aks-platform"
+client_name = "ciokma"
+
+create_in_vnet    = true
+qdrant_pv_pattern = "qdrant-pvc"
+qdrant_namespace  = "default"
+# Audience para tokens AAD contra el API de AKS
+aks_audience        = "6dae42f8-4368-4678-94ff-3960e28e3630/.default" # it's the same for all of the aks env
+cron_schedule       = "0 */50 * * * *"
