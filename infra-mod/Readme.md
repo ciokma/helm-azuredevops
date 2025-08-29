@@ -61,7 +61,6 @@ Fixed audience ID required to request Azure AD (Microsoft Entra ID) tokens for t
 This value is a Microsoft-defined constant, the same across **all environments**, and must be used when requesting access tokens for authenticating against AKS, for example using `kubelogin`.
 
 
-
 📖 Reference: [Authenticate with Azure Kubernetes Service (AKS) using Microsoft Entra ID](https://learn.microsoft.com/en-us/azure/aks/concepts-identity#azure-ad-integration)
 
 
