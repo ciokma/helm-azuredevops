@@ -30,13 +30,13 @@ class Appsetings:
             raise ValueError("AZURE_SUBSCRIPTION_ID must be provided")
         if not self.k8s_namespace:
             raise ValueError("K8S_NAMESPACE must be provided")
-        if not self.region:
+        if not self.location:
             raise ValueError("LOCATION must be provided")
         if not self.aks_audience:
             raise ValueError("AKS_AUDIENCE must be provided")
 
         logging.info(
             f"Config validated: env={self.environment}, RG={self.resource_group}, TRG={self.target_resource_group}, "
-            f"sub={self.subscription_id}, ns={self.k8s_namespace}, region={self.region}, "
+            f"sub={self.subscription_id}, ns={self.k8s_namespace}, location={self.location}, "
             f"aks_audience={self.aks_audience}, user_identity_client_id={self.user_assigned_identity_client_id}"
         )
