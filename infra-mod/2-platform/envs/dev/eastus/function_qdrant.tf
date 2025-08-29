@@ -27,5 +27,6 @@ module "function_qdrant_backup" {
   qdrant_pv_pattern        = var.qdrant_pv_pattern
   qdrant_namespace         = var.qdrant_namespace
   aks_audience             = var.aks_audience
+  cron_schedule            = var.cron_schedule
 }
 

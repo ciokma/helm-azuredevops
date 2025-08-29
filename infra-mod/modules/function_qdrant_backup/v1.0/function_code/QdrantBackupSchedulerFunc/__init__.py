@@ -9,11 +9,11 @@ from azure.mgmt.compute import ComputeManagementClient
 from azure.mgmt.containerservice import ContainerServiceClient
 from kubernetes import client as k8s_client
 
-from common .config import Appsetings
+from common.config import Appsetings
 
 # Initialize configuration
 config = Appsetings()
-config.validate()
+
 
 # --------------------------
 # Helpers
@@ -94,7 +94,7 @@ def create_snapshot(disk_uri: str):
     start_time = datetime.utcnow()
 
     snapshot_params = {
-        "location": config.region,  # Use region from config
+        "location": config.location,
         "creation_data": {"create_option": "Copy", "source_uri": disk_uri},
         "tags": {
             "createdBy": "qdrant_snapshot_function",
@@ -127,6 +127,7 @@ def main(mytimer: TimerRequest) -> None:
     logging.info("Starting Qdrant snapshot function...")
 
     try:
+        config.validate()
         v1 = build_k8s_client(get_credential(), config.subscription_id, config.resource_group, config.cluster_name)
         disk_uri = get_volume_or_disk(config.qdrant_pv_pattern, v1, config.k8s_namespace)
 

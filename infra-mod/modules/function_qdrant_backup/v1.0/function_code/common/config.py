@@ -4,12 +4,12 @@ import logging
 class Appsetings:
     def __init__(self):
         # Core environment settings
-        self.environment = os.getenv("ENVIRONMENT", "dev").lower()
-        self.resource_group = os.getenv("RESOURCE_GROUP_NAME", f"rg-{self.environment}")
+        self.environment = os.getenv("ENVIRONMENT","").lower()
+        self.resource_group = os.getenv("RESOURCE_GROUP_NAME","")
         self.target_resource_group = os.getenv("TARGET_RESOURCE_GROUP", "")
-        self.cluster_name = os.getenv("CLUSTER_NAME", f"aks-{self.environment}")
+        self.cluster_name = os.getenv("CLUSTER_NAME", "")
         self.subscription_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-        self.region = os.getenv("REGION", "eastus")  # Region for disks & snapshots
+        self.location = os.getenv("LOCATION", "") 
         self.aks_audience = os.getenv(
             "AKS_AUDIENCE", "6dae42f8-4368-4678-94ff-3960e28e3630/.default"
         )
@@ -17,7 +17,7 @@ class Appsetings:
         self.user_assigned_identity_client_id = os.getenv("USER_ASSIGNED_IDENTITY_CLIENT_ID")
 
         # Qdrant-specific configuration
-        self.qdrant_pv_pattern = os.getenv("QDRANT_PV_PATTERN", "qdrant")
+        self.qdrant_pv_pattern = os.getenv("QDRANT_PV_PATTERN", "qdrant-pvc")
         self.k8s_namespace = os.getenv("K8S_NAMESPACE", "default")
 
     def validate(self):
@@ -31,7 +31,7 @@ class Appsetings:
         if not self.k8s_namespace:
             raise ValueError("K8S_NAMESPACE must be provided")
         if not self.region:
-            raise ValueError("REGION must be provided")
+            raise ValueError("LOCATION must be provided")
         if not self.aks_audience:
             raise ValueError("AKS_AUDIENCE must be provided")
 

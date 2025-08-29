@@ -96,7 +96,7 @@ resource "azurerm_function_app_flex_consumption" "function" {
     AZURE_RESOURCE_GROUP_NAME = var.resource_group_name
     TARGET_RESOURCE_GROUP     = var.tg_resource_group_name
     ENVIRONMENT               = var.environment
-    
+
     # Vincula Application Insights
     APPINSIGHTS_INSTRUMENTATIONKEY        = azurerm_application_insights.app_insights.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.app_insights.connection_string

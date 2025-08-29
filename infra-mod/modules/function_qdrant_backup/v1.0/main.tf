@@ -96,12 +96,14 @@ resource "azurerm_function_app_flex_consumption" "function" {
     AZURE_CLIENT_ID       = azurerm_user_assigned_identity.function_identity.client_id
     AZURE_TENANT_ID       = var.tenant_id
     AZURE_SUBSCRIPTION_ID = var.subscription_id
+    LOCATION              = var.location
     CLUSTER_NAME          = var.aks_cluster_name
     RESOURCE_GROUP_NAME   = var.resource_group_name
     TARGET_RESOURCE_GROUP = var.target_resource_group_name
     ENVIRONMENT           = var.environment
     QDRANT_PV_PATTERN     = var.qdrant_pv_pattern
     QDRANT_NAMESPACE      = var.qdrant_namespace
+    CRON_SCHEDULE         = var.cron_schedule
     # Audience for getting tokens AAD with the API de AKS API
     AKS_AUDIENCE                          = var.aks_audience
     APPINSIGHTS_INSTRUMENTATIONKEY        = azurerm_application_insights.app_insights.instrumentation_key

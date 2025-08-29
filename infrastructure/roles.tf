@@ -26,9 +26,9 @@ resource "azurerm_role_assignment" "function_storage_blob_reader" {
 # Role Assignment to allow the function to create snapshots
 resource "azurerm_role_assignment" "function_snapshot_contributor" {
   # Referencing the ID of the target resource group
-  scope                = azurerm_resource_group.target_rg.id
+  scope = azurerm_resource_group.target_rg.id
   # The Contributor role allows snapshot creation
   role_definition_name = "Contributor"
   # The principal is your function's managed identity
-  principal_id         = azurerm_user_assigned_identity.function_identity.principal_id
+  principal_id = azurerm_user_assigned_identity.function_identity.principal_id
 }

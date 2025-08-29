@@ -46,3 +46,10 @@ variable "qdrant_namespace" {
 variable "aks_audience" {
 
 }
+variable "alert_email_address" {
+  description = "The email address to receive function failure alerts."
+  type        = string
+}
+variable "cron_schedule" {
+
+}
