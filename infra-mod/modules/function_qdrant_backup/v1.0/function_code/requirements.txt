@@ -2,8 +2,8 @@
 # The Python Worker is managed by the Azure Functions platform
 # Manually managing azure-functions-worker may cause unexpected issues
 
-azure-functions            # Azure Functions runtime support for Python
-azure-identity             # Azure authentication via Managed Identity, CLI, or environment
-azure-mgmt-containerservice # Manage Azure Kubernetes Service (AKS) clusters
-azure-mgmt-compute         # Manage Azure Compute resources, including snapshots
-kubernetes                 # Kubernetes Python client for interacting with cluster resources
+azure-functions==1.22.1            # Azure Functions runtime support for Python
+azure-identity==1.21.0             # Azure authentication via Managed Identity, CLI, or environment
+azure-mgmt-containerservice==35.0.0 # Manage Azure Kubernetes Service (AKS) clusters
+azure-mgmt-compute==34.1.0         # Manage Azure Compute resources, including snapshots
+kubernetes==32.0.1                 # Kubernetes Python client for interacting with cluster resources
