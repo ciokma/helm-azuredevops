@@ -9,11 +9,11 @@ resource "azurerm_role_assignment" "function_reader_aks_cluster" {
 }
 
 # Role Assignment para Cluster Admin
-resource "azurerm_role_assignment" "function_cluster_admin" {
-  scope                = var.aks_id
-  role_definition_name = "Azure Kubernetes Service Cluster Admin Role"
-  principal_id         = azurerm_user_assigned_identity.function_identity.principal_id
-}
+# resource "azurerm_role_assignment" "function_cluster_admin" {
+#   scope                = var.aks_id
+#   role_definition_name = "Azure Kubernetes Service Cluster Admin Role"
+#   principal_id         = azurerm_user_assigned_identity.function_identity.principal_id
+# }
 
 resource "azurerm_role_assignment" "function_contributor_rg" {
   scope                = var.resource_group_id
