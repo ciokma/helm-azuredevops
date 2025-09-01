@@ -14,7 +14,6 @@ module "function_qdrant_backup" {
   function_name              = var.function_name
   aks_cluster_name           = local.aks_cluster_name
   target_resource_group_name = var.target_resource_group_name
-  tenant_id                  = var.tenant_id
   subscription_id            = var.subscription_id
   environment                = var.environment
   function_vnet_subnet_id    = data.terraform_remote_state.network.outputs.function_subnet_id

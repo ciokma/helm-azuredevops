@@ -13,7 +13,6 @@ variable "deploy_in_vnet" {
 
 variable "aks_cluster_name" {}
 variable "subscription_id" {}
-variable "tenant_id" {}
 variable "target_resource_group_name" {}
 variable "environment" {}
 # Whether to deploy the function inside a VNet
