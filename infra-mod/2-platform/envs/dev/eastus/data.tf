@@ -1,3 +1,12 @@
+data "terraform_remote_state" "bootstrap" {
+  backend = "azurerm"
+  config = {
+    resource_group_name  = "rg-tfstates"
+    storage_account_name = "sttfstateusdev"
+    container_name       = "tfstate"
+    key                  = "bootstrap.terraform.tfstate"
+  }
+}
 data "terraform_remote_state" "network" {
   backend = "azurerm"
   config = {

@@ -1,12 +1,4 @@
-data "terraform_remote_state" "bootstrap" {
-  backend = "azurerm"
-  config = {
-    resource_group_name  = "rg-tfstates"
-    storage_account_name = "sttfstateusdev"
-    container_name       = "tfstate"
-    key                  = "bootstrap.terraform.tfstate"
-  }
-}
+
 module "function_qdrant_backup" {
   source                     = "/mnt/d/Terraform/helm-azuredevops/infra-mod/modules/function_qdrant_backup/v1.0"
   resource_group_name        = var.resource_group_name

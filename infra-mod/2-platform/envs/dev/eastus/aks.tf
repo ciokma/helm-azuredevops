@@ -1,15 +1,4 @@
 
-data "terraform_remote_state" "network" {
-  backend = "azurerm"
-  config = {
-    resource_group_name  = "rg-tfstates"
-    storage_account_name = "sttfstateusdev"
-    container_name       = "tfstate"
-    key                  = "1-network.tfstate" # El nombre de estado del módulo 1
-  }
-}
-
-
 module "aks" {
   source              = "/mnt/d/Terraform/helm-azuredevops/infra-mod/modules/aks/v1.0"
   resource_group_name = var.resource_group_name
