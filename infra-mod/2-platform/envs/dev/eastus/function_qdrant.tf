@@ -27,5 +27,6 @@ module "function_qdrant_backup" {
   qdrant_namespace         = var.qdrant_namespace
   aks_audience             = var.aks_audience
   cron_schedule            = var.cron_schedule
+  alert_email = var.alert_email
 }
 
