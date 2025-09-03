@@ -22,7 +22,7 @@ resource "azurerm_storage_container" "function_container" {
 
 # Service Plan (Flex Consumption)
 resource "azurerm_service_plan" "function_plan_flex" {
-  name                = "${var.function_name}-plan"
+  name                = "${local.function_full_name}-plan"
   resource_group_name = var.resource_group_name
   location            = var.location
   sku_name            = "FC1"
@@ -31,7 +31,7 @@ resource "azurerm_service_plan" "function_plan_flex" {
 
 # User Assigned Identity
 resource "azurerm_user_assigned_identity" "function_identity" {
-  name                = "${var.function_name}-identity"
+  name                = "${local.function_full_name}-identity"
   location            = var.location
   resource_group_name = var.resource_group_name
 }
@@ -45,7 +45,7 @@ data "archive_file" "python_function_package" {
 
 # Log Analytics
 resource "azurerm_log_analytics_workspace" "log_analytics_ws" {
-  name                = "${var.function_name}-la"
+  name                = "${local.function_full_name}-la"
   location            = var.location
   resource_group_name = var.resource_group_name
   sku                 = "PerGB2018"
@@ -54,7 +54,7 @@ resource "azurerm_log_analytics_workspace" "log_analytics_ws" {
 
 # Application Insights
 resource "azurerm_application_insights" "app_insights" {
-  name                = "${var.function_name}-ai"
+  name                = "${local.function_full_name}-ai"
   location            = var.location
   resource_group_name = var.resource_group_name
   application_type    = "web"
@@ -63,7 +63,7 @@ resource "azurerm_application_insights" "app_insights" {
 
 # Function App Flex Consumption
 resource "azurerm_function_app_flex_consumption" "function" {
-  name                = var.function_name
+  name                = local.function_full_name
   resource_group_name = var.resource_group_name
   location            = var.location
   service_plan_id     = azurerm_service_plan.function_plan_flex.id
@@ -130,5 +130,54 @@ resource "null_resource" "function_deploy" {
   provisioner "local-exec" {
     command     = "az functionapp deployment source config-zip -g ${var.resource_group_name} -n ${azurerm_function_app_flex_consumption.function.name} --src ${data.archive_file.python_function_package.output_path}"
     interpreter = ["/bin/bash", "-c"]
+  }
+}
+# Action Group - defines where notifications will be sent
+resource "azurerm_monitor_action_group" "function_alerts_ag" {
+  name                = "${local.function_full_name}-ag"
+  resource_group_name = var.resource_group_name
+  short_name          = "agfunc-${var.environment}" # max lenght 12
+
+  email_receiver {
+    name                    = "admin-email"
+    email_address           = var.alert_email # Variable with destination email
+    use_common_alert_schema = true
+  }
+}
+resource "azurerm_monitor_scheduled_query_rules_alert_v2" "exceptions_query" {
+  name                = "${local.function_full_name}-failure-alert"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  description         = "The QRANT snapshot function FAILED in ${var.environment}"
+  display_name        = "Alert for: ${local.function_full_name}-${var.location}-${var.environment}"
+  severity            = 0 # | 0 Critical | 1 Error  | 2 Warning | 3 Informational | 4 Verbose
+  enabled             = true
+
+  evaluation_frequency = "PT5M" # each five minutes
+  window_duration      = "PT5M" # eval each minutes
+  scopes               = [azurerm_application_insights.app_insights.id]
+
+  criteria {
+    query                   = <<-QUERY
+        requests
+        | where cloud_RoleName == "${local.function_full_name}" 
+        | where success == false
+        | summarize failed_count = count() by bin(timestamp, 1m)
+        | where failed_count > 0
+    QUERY
+    time_aggregation_method = "Total"
+    operator                = "GreaterThan"
+    threshold               = 0
+
+    metric_measure_column = "failed_count"
+
+    failing_periods {
+      minimum_failing_periods_to_trigger_alert = 1
+      number_of_evaluation_periods             = 1
+    }
+  }
+
+  action {
+    action_groups = [azurerm_monitor_action_group.function_alerts_ag.id]
   }
 }

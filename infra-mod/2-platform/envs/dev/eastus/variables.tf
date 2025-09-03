@@ -147,3 +147,7 @@ variable "aks_audience" {
 variable "cron_schedule" {
 
 }
+variable "alert_email" {
+  description = "Correo donde se enviarán las notificaciones de fallo"
+  type        = string
+}

@@ -1,0 +1,9 @@
+AlwaysReadyFunctionExecutionCount: Always Ready Function Execution Count. Always Ready Function Execution Count. For Flex Consumption FunctionApps only.
+AlwaysReadyFunctionExecutionUnits: Always Ready Function Execution Units. Always Ready Function Execution Units. For Flex Consumption FunctionApps only.
+AlwaysReadyUnits: Always Ready Units. Always Ready Units. For Flex Consumption FunctionApps only.
+CpuPercentage: Percentage CPU. The average percentage of CPU being used. For Flex Consumption function apps only.
+OnDemandFunctionExecutionCount: On Demand Function Execution Count. On Demand Function Execution Count. For Flex Consumption FunctionApps only.
+OnDemandFunctionExecutionUnits: On Demand Function Execution Units. On Demand Function Execution Units. For Flex Consumption FunctionApps only.
+
+URL
+https://learn.microsoft.com/en-us/azure/azure-monitor/reference/supported-metrics/microsoft-web-sites-metrics

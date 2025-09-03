@@ -140,3 +140,4 @@ def main(mytimer: TimerRequest) -> None:
 
     except Exception as e:
         logging.error(f"Error in snapshot function: {e}", exc_info=True)
+        raise  # throw Exception

@@ -1,0 +1,22 @@
+requests
+| summarize count() by cloud_RoleName
+
+requests
+| where cloud_RoleName == "func-aks-backup" 
+| where success == false
+| summarize failed_count = count() by bin(timestamp, 1m)
+| where failed_count > 0
+
+requests
+| summarize total_requests = count(), failed_requests = countif(success == false) by cloud_RoleName
+| order by failed_requests desc
+
+
+requests
+| summarize total_requests = count(), failed_requests = countif(success == false) by cloud_RoleName, operation_Name
+| order by failed_requests desc
+
+
+requests
+| summarize count() by cloud_RoleName, operation_Name
+| order by count_ desc
