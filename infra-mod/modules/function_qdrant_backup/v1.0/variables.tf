@@ -48,3 +48,6 @@ variable "aks_audience" {
 variable "cron_schedule" {
 
 }
+variable "alert_email" {
+  
+}
