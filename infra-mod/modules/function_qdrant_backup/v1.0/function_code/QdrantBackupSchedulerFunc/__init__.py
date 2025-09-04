@@ -139,5 +139,5 @@ def main(mytimer: TimerRequest) -> None:
         logging.info("Qdrant snapshot function completed successfully.")
 
     except Exception as e:
-        logging.error(f"Error in snapshot function: {e}", exc_info=True)
+        logging.error(f"Error in snapshot function: {type(e).__name__}: {e}")
         raise  # throw Exception

@@ -143,6 +143,12 @@ resource "azurerm_monitor_action_group" "function_alerts_ag" {
     email_address           = var.alert_email # Variable with destination email
     use_common_alert_schema = true
   }
+  # email_receiver {
+  #   name                    = "other-email3"
+  #   email_address           = "..." 
+  #   use_common_alert_schema = true
+  # }
+
 }
 resource "azurerm_monitor_scheduled_query_rules_alert_v2" "exceptions_query" {
   name                = "${local.function_full_name}-failure-alert"
@@ -153,8 +159,8 @@ resource "azurerm_monitor_scheduled_query_rules_alert_v2" "exceptions_query" {
   severity            = 0 # | 0 Critical | 1 Error  | 2 Warning | 3 Informational | 4 Verbose
   enabled             = true
 
-  evaluation_frequency = "PT5M" # each five minutes
-  window_duration      = "PT5M" # eval each minutes
+  evaluation_frequency = "PT10M" # each 10 minutes
+  window_duration      = "PT10M" # eval 20 minutes
   scopes               = [azurerm_application_insights.app_insights.id]
 
   criteria {
